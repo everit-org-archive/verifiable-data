@@ -72,10 +72,10 @@
             <version>2.0.3</version>
             <scope>provided</scope>
         </dependency>
-<!--         <dependency> -->
-<!--             <groupId>org.everit.verifiabledata</groupId> -->
-<!--             <artifactId>org.everit.verifiabledata.api</artifactId> -->
-<!--             <version>${project.version}</version> -->
-<!--         </dependency> -->
+        <dependency>
+            <groupId>org.everit.verifiabledata</groupId>
+            <artifactId>org.everit.verifiabledata.api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>
