@@ -34,7 +34,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.everit.verifiabledata.api.VerifyDataStatus;
+import org.everit.verifiabledata.api.enums.VerifyDataStatus;
 
 @Entity
 @Table(name = "VERIFY_DATA")

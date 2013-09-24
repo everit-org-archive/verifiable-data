@@ -46,7 +46,7 @@
 	<artifactId>org.everit.verifiabledata.core</artifactId>
 
 	<packaging>bundle</packaging>
-	<name>Everit verifiableData Api</name>
+	<name>Everit verifiableData Core</name>
 	<description>Everit verifiableData</description>
 
 	<build>

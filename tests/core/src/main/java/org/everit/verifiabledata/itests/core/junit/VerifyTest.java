@@ -1,4 +1,4 @@
-package org.everit.verifiabledata.api;
+package org.everit.verifiabledata.itests.core.junit;
 
 /*
  * Copyright (c) 2011, Everit Kft.
@@ -21,11 +21,13 @@ package org.everit.verifiabledata.api;
  * MA 02110-1301  USA
  */
 
-public enum VerifyDataStatus {
+import org.junit.Test;
 
-    VERIFIED,
+public interface VerifyTest {
 
-    WAITING_VERIFICATION,
+    @Test
+    void testCreate();
 
-    REJECTED;
+    @Test
+    void testSelect();
 }
