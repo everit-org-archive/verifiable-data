@@ -21,10 +21,19 @@ package org.everit.verifiabledata.api.dto;
  * MA 02110-1301  USA
  */
 
+/**
+ * Information of the verifiable data.
+ */
 public class VerifiableDataCreation {
 
+    /**
+     * The id of the verifiable data.
+     */
     private long verifiableDataId;
 
+    /**
+     * The verification request.
+     */
     private VerificationRequest verificationRequest;
 
     public VerifiableDataCreation(final long verifiableDataId, final VerificationRequest verificationRequest) {

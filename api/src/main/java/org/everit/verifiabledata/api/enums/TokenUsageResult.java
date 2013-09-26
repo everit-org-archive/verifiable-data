@@ -21,11 +21,23 @@ package org.everit.verifiabledata.api.enums;
  * MA 02110-1301  USA
  */
 
+/**
+ * Enumeration of token status.
+ */
 public enum TokenUsageResult {
 
+    /**
+     * The token has been expired.
+     */
     EXPIRED,
 
+    /**
+     * The token is verified.
+     */
     VERIFIED,
 
+    /**
+     * The token has been rejected.
+     */
     REJECTED;
 }

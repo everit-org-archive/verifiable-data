@@ -56,6 +56,11 @@ public class VerificationRequestEntity {
     private long verificationLength;
 
     /**
+     * The token UUID of the verification request.
+     */
+    @Column(name = "TOKEN_UUID")
+    private String tokenUuid;
+    /**
      * The type of {@link VerificationLengthBase}.
      */
     @Column(name = "VERIFICATION_LENGTH_BASE")
@@ -69,7 +74,75 @@ public class VerificationRequestEntity {
     @JoinColumn(name = "VERIFIABLE_DATA_ID", nullable = false, referencedColumnName = "VERIFIABLE_DATA_ID")
     private VerifiableDataEntity verifiableData;
 
+    /**
+     * The default constructor.
+     */
     public VerificationRequestEntity() {
+    }
+
+    /**
+     * The simple constructor.
+     * 
+     * @param verificationRequestId
+     *            the id of the verification request.
+     * @param verificationLength
+     *            the length of the verification request.
+     * @param tokenUuid
+     *            the token UUID of the verification request.
+     * @param verificationLengthBase
+     *            the verification length base of the verification request.
+     * @param verifiableData
+     *            the verifiable data object of the verification request.
+     */
+    public VerificationRequestEntity(final long verificationRequestId, final long verificationLength,
+            final String tokenUuid,
+            final VerificationLengthBase verificationLengthBase, final VerifiableDataEntity verifiableData) {
+        super();
+        this.verificationRequestId = verificationRequestId;
+        this.verificationLength = verificationLength;
+        this.tokenUuid = tokenUuid;
+        this.verificationLengthBase = verificationLengthBase;
+        this.verifiableData = verifiableData;
+    }
+
+    public String getTokenUuid() {
+        return tokenUuid;
+    }
+
+    public VerifiableDataEntity getVerifiableData() {
+        return verifiableData;
+    }
+
+    public long getVerificationLength() {
+        return verificationLength;
+    }
+
+    public VerificationLengthBase getVerificationLengthBase() {
+        return verificationLengthBase;
+    }
+
+    public long getVerificationRequestId() {
+        return verificationRequestId;
+    }
+
+    public void setTokenUuid(final String tokenUuid) {
+        this.tokenUuid = tokenUuid;
+    }
+
+    public void setVerifiableData(final VerifiableDataEntity verifiableData) {
+        this.verifiableData = verifiableData;
+    }
+
+    public void setVerificationLength(final long verificationLength) {
+        this.verificationLength = verificationLength;
+    }
+
+    public void setVerificationLengthBase(final VerificationLengthBase verificationLengthBase) {
+        this.verificationLengthBase = verificationLengthBase;
+    }
+
+    public void setVerificationRequestId(final long verificationRequestId) {
+        this.verificationRequestId = verificationRequestId;
     }
 
 }
