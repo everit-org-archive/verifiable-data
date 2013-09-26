@@ -34,67 +34,65 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.everit.verifiabledata.api.enums.VerifyDataStatus;
-
+/**
+ * The entity of the verifiable data.
+ */
 @Entity
-@Table(name = "VERIFY_DATA")
-public class VerifyDataEntity {
+@Table(name = "VERIFY_VERIFIABLE_DATA")
+public class VerifiableDataEntity {
 
+    /**
+     * The if of the verifiable data.
+     */
     @Id
     @GeneratedValue
     @Column(name = "VERIFIABLE_DATA_ID")
     private long verifiableDataId;
 
-    @Column(name = "STATUS")
-    private VerifyDataStatus status;
-
-    @Column(name = "STATUS_VALIDITY_DATE")
+    /**
+     * The expiration date of the verifiable data. If <code>null</code> is data never verified.
+     */
+    @Column(name = "VERIFIED_UNTIL")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date statusValidityDate;
+    private Date verifiedUntil;
 
-    @OneToMany(mappedBy = "verifyData", fetch = FetchType.LAZY, targetEntity = VerifyProcessEntity.class)
-    private List<VerifyProcessEntity> verifyProcesses;
+    @OneToMany(mappedBy = "verifiableData", fetch = FetchType.LAZY, targetEntity = VerificationRequestEntity.class)
+    private List<VerificationRequestEntity> verificationRequestes;
 
-    public VerifyDataEntity() {
+    /**
+     * The default constructor.
+     */
+    public VerifiableDataEntity() {
     }
 
-    public VerifyDataEntity(final long verifiableDataId, final VerifyDataStatus status, final Date statusValidityDate) {
+    /**
+     * The simple constructor.
+     * 
+     * @param verifiableDataId
+     *            the id of the verifiable data.
+     * @param verifiedUntil
+     *            the expiration date of the verifiable data.
+     */
+    public VerifiableDataEntity(final long verifiableDataId, final Date verifiedUntil) {
         super();
         this.verifiableDataId = verifiableDataId;
-        this.status = status;
-        this.statusValidityDate = statusValidityDate;
-    }
-
-    public VerifyDataStatus getStatus() {
-        return status;
-    }
-
-    public Date getStatusValidityDate() {
-        return statusValidityDate;
+        this.verifiedUntil = verifiedUntil;
     }
 
     public long getVerifiableDataId() {
         return verifiableDataId;
     }
 
-    public List<VerifyProcessEntity> getVerifyProcesses() {
-        return verifyProcesses;
-    }
-
-    public void setStatus(final VerifyDataStatus status) {
-        this.status = status;
-    }
-
-    public void setStatusValidityDate(final Date statusValidityDate) {
-        this.statusValidityDate = statusValidityDate;
+    public Date getVerifiedUntil() {
+        return verifiedUntil;
     }
 
     public void setVerifiableDataId(final long verifiableDataId) {
         this.verifiableDataId = verifiableDataId;
     }
 
-    public void setVerifyProcesses(final List<VerifyProcessEntity> verifyProcesses) {
-        this.verifyProcesses = verifyProcesses;
+    public void setVerifiedUntil(final Date verifiedUntil) {
+        this.verifiedUntil = verifiedUntil;
     }
 
 }

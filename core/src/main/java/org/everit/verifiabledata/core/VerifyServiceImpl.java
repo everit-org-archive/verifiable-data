@@ -27,9 +27,6 @@ import javax.persistence.EntityManager;
 
 import org.everit.verifiabledata.api.VerifyService;
 import org.everit.verifiabledata.api.dto.VerifiableDataCreation;
-import org.everit.verifiabledata.api.enums.VerifyDataStatus;
-import org.everit.verifiabledata.entity.VerifyDataEntity;
-import org.everit.verifiabledata.entity.VerifyProcessEntity;
 
 public class VerifyServiceImpl implements VerifyService {
 
@@ -40,32 +37,34 @@ public class VerifyServiceImpl implements VerifyService {
 
     @Override
     public VerifiableDataCreation createVerifiableData(final Date tokenValidityEndDate) {
-        VerifyDataEntity verifyDataEntity = new VerifyDataEntity();
-        verifyDataEntity.setStatusValidityDate(tokenValidityEndDate);
-        verifyDataEntity.setStatus(VerifyDataStatus.WAITING_VERIFICATION);
-        em.persist(verifyDataEntity);
-        em.flush();
-        verifyDataEntity.getVerifiableDataId();
-        VerifyProcessEntity verifyProcessEntity = new VerifyProcessEntity();
-        verifyProcessEntity.setTokenValidityEndDate(tokenValidityEndDate);
-        verifyProcessEntity.setVerifyData(verifyDataEntity);
-        em.persist(verifyProcessEntity);
-        em.flush();
-        VerifiableDataCreation verifiableDataCreation = new VerifiableDataCreation(
-                verifyDataEntity.getVerifiableDataId(), "", "");
-        return verifiableDataCreation;
+        // VerifiableDateEntity verifyDataEntity = new VerifiableDateEntity();
+        // verifyDataEntity.setStatusValidityDate(tokenValidityEndDate);
+        // verifyDataEntity.setStatus(VerifyDataStatus.WAITING_VERIFICATION);
+        // em.persist(verifyDataEntity);
+        // em.flush();
+        // verifyDataEntity.getVerifiableDataId();
+        // VerificationRequest verifyProcessEntity = new VerificationRequest();
+        // verifyProcessEntity.setTokenValidityEndDate(tokenValidityEndDate);
+        // verifyProcessEntity.setVerifyData(verifyDataEntity);
+        // em.persist(verifyProcessEntity);
+        // em.flush();
+        // VerifiableDataCreation verifiableDataCreation = new VerifiableDataCreation(
+        // verifyDataEntity.getVerifiableDataId(), "", "");
+        // return verifiableDataCreation;
+        return null;
     }
 
     @Override
     public VerifiableDataCreation select(final long id) {
-        System.out.println("--------------------");
-        System.out.println("id: " + id);
-        VerifyDataEntity find = em.find(VerifyDataEntity.class, id);
-        System.out.println("--------------------");
-        System.out.println("status: " + find.getStatus());
-        VerifiableDataCreation verifiableDataCreation = new VerifiableDataCreation(
-                find.getVerifiableDataId(), "", "");
-        return verifiableDataCreation;
+        // System.out.println("--------------------");
+        // System.out.println("id: " + id);
+        // VerifiableDateEntity find = em.find(VerifiableDateEntity.class, id);
+        // System.out.println("--------------------");
+        // System.out.println("status: " + find.getStatus());
+        // VerifiableDataCreation verifiableDataCreation = new VerifiableDataCreation(
+        // find.getVerifiableDataId(), "", "");
+        // return verifiableDataCreation;
+        return null;
     }
 
     public void setEm(final EntityManager em) {

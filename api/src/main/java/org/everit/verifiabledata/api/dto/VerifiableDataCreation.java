@@ -25,38 +25,28 @@ public class VerifiableDataCreation {
 
     private long verifiableDataId;
 
-    private String approveToken;
+    private VerificationRequest verificationRequest;
 
-    private String rejectToken;
-
-    public VerifiableDataCreation(final long verifiableDataId, final String approveToken, final String rejectToken) {
+    public VerifiableDataCreation(final long verifiableDataId, final VerificationRequest verificationRequest) {
         super();
         this.verifiableDataId = verifiableDataId;
-        this.approveToken = approveToken;
-        this.rejectToken = rejectToken;
-    }
-
-    public String getApproveToken() {
-        return approveToken;
-    }
-
-    public String getRejectToken() {
-        return rejectToken;
+        this.verificationRequest = verificationRequest;
     }
 
     public long getVerifiableDataId() {
         return verifiableDataId;
     }
 
-    public void setApproveToken(final String approveToken) {
-        this.approveToken = approveToken;
-    }
-
-    public void setRejectToken(final String rejectToken) {
-        this.rejectToken = rejectToken;
+    public VerificationRequest getVerificationRequest() {
+        return verificationRequest;
     }
 
     public void setVerifiableDataId(final long verifiableDataId) {
         this.verifiableDataId = verifiableDataId;
     }
+
+    public void setVerificationRequest(final VerificationRequest verificationRequest) {
+        this.verificationRequest = verificationRequest;
+    }
+
 }
