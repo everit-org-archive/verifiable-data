@@ -1,4 +1,4 @@
-package org.everit.verifiabledata.itests.core.service;
+package org.everit.verifiabledata.core;
 
 /*
  * Copyright (c) 2011, Everit Kft.
@@ -25,6 +25,7 @@ import java.util.Date;
 
 import javax.persistence.EntityManager;
 
+import org.everit.verifiabledata.api.VerifyService;
 import org.everit.verifiabledata.api.dto.VerifiableDataCreation;
 import org.everit.verifiabledata.api.enums.VerifyDataStatus;
 import org.everit.verifiabledata.entity.VerifyDataEntity;
@@ -57,7 +58,11 @@ public class VerifyServiceImpl implements VerifyService {
 
     @Override
     public VerifiableDataCreation select(final long id) {
+        System.out.println("--------------------");
+        System.out.println("id: " + id);
         VerifyDataEntity find = em.find(VerifyDataEntity.class, id);
+        System.out.println("--------------------");
+        System.out.println("status: " + find.getStatus());
         VerifiableDataCreation verifiableDataCreation = new VerifiableDataCreation(
                 find.getVerifiableDataId(), "", "");
         return verifiableDataCreation;

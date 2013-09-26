@@ -1,4 +1,4 @@
-package org.everit.verifiabledata.itests.core.service;
+package org.everit.verifiabledata.api;
 
 import java.util.Date;
 

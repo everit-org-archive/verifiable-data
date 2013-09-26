@@ -1,4 +1,4 @@
-package org.everit.verifiabledata.itests.core.junit;
+package org.everit.verifiabledata.itests.core;
 
 /*
  * Copyright (c) 2011, Everit Kft.

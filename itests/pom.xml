@@ -33,13 +33,14 @@
     </parent>
 
     <groupId>org.everit.verifiabledata</groupId>
-    <artifactId>tests</artifactId>
+    <artifactId>itests</artifactId>
     <packaging>pom</packaging>
-    
+
     <name>Everit verifiableData Tests</name>
     <description>Integration tests of Everit verifiableData.</description>
-    
+
     <modules>
+        <module>config</module>
         <module>core</module>
     </modules>
 
