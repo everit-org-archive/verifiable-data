@@ -49,6 +49,7 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Import-Package>
+                            org.everit.token.entity,
                             org.everit.verifiabledata.entity,
                             org.everit.verifiabledata.api.dto,
                             org.everit.verifiabledata.api.enums,

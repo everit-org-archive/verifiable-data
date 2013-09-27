@@ -27,6 +27,7 @@
 
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
 
+        <class>org.everit.token.entity.TokenEntity</class>
         <class>org.everit.verifiabledata.entity.VerifiableDataEntity</class>
         <class>org.everit.verifiabledata.entity.VerificationRequestEntity</class>
 

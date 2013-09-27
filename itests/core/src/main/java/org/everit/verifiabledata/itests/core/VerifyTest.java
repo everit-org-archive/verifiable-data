@@ -26,8 +26,14 @@ import org.junit.Test;
 public interface VerifyTest {
 
     @Test
-    void testCreate();
+    void testCreates();
 
     @Test
-    void testSelect();
+    void testGetVerificationEndDate();
+
+    @Test
+    void testReduceVerificationEndDate();
+
+    @Test
+    void testVerifyData();
 }

@@ -1,5 +1,26 @@
 package org.everit.verifiabledata.api;
 
+/*
+ * Copyright (c) 2011, Everit Kft.
+ *
+ * All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
+ */
+
 import java.util.Date;
 
 import org.everit.verifiabledata.api.dto.VerifiableDataCreation;
@@ -36,13 +57,13 @@ public interface VerifyService {
      * @param tokenValidityEndDate
      *            the expiration date of the token. Cannot be <code>null</code>.
      * @param verificationLength
-     *            the verification length in seconds.
+     *            the verification length in seconds. Must be positive.
      * @param verificationLengthBase
      *            the {@link VerificationLengthBase} that is valid for the request. Cannot be <code>null</code>.
      * @return the {@link VerifiableDataCreation} object. If not created the verifiable data return <code>null</code>.
      * 
      * @throws IllegalArgumentException
-     *             if one parameter is <code>null</code>.
+     *             if one parameter is <code>null</code> or verificationLength not positive.
      **/
     VerifiableDataCreation createVerifiableData(final Date tokenValidityEndDate, final long verificationLength,
             final VerificationLengthBase verificationLengthBase);
@@ -56,13 +77,14 @@ public interface VerifyService {
      * @param tokenValidityEndDate
      *            the expiration date of the token. Cannot be <code>null</code>.
      * @param verificationLength
-     *            the verification length in seconds. Cannot be <code>null</code>.
+     *            the verification length in seconds. Must be positive.
      * @param verificationLengthBase
      *            the {@link VerificationLengthBase} that is valid for the request. Cannot be <code>null</code>.
      * @return the {@link VerificationRequest} object. If not creating the verifiable request return <code>null</code>.
      * 
      * @throws IllegalArgumentException
-     *             if one parameter is <code>null</code> or the verifiable data is not exist.
+     *             if one parameter is <code>null</code> or the verifiable data is not exist or verificationLength not
+     *             positive.
      */
     VerificationRequest createVerificationRequest(final long verifiableDataId, final Date tokenValidityEndDate,
             final long verificationLength, final VerificationLengthBase verificationLengthBase);
@@ -88,7 +110,7 @@ public interface VerifyService {
      * @param verificationEndDate
      *            the new verification date.
      * @return <code>true</code> if the cuts down successful ready. Return <code>false</code> if the specified date
-     *         preceded in original date.
+     *         bigger than the original date.
      * @throws IllegalArgumentException
      *             if the verificationEndDate before than actual date or the verifiable data is not exits or the
      *             verifiable data is not exist.
