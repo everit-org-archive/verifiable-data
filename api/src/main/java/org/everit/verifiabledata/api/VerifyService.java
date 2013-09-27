@@ -52,7 +52,7 @@ public interface VerifyService {
      * verifiable date request is withdraw.
      * 
      * @param verifiableDataId
-     *            the id of the verifiable data.
+     *            the id of the verifiable data. Must be exist verifiable data.
      * @param tokenValidityEndDate
      *            the expiration date of the token. Cannot be <code>null</code>.
      * @param verificationLength
@@ -62,7 +62,7 @@ public interface VerifyService {
      * @return the {@link VerificationRequest} object. If not creating the verifiable request return <code>null</code>.
      * 
      * @throws IllegalArgumentException
-     *             if one parameter is <code>null</code>.
+     *             if one parameter is <code>null</code> or the verifiable data is not exist.
      */
     VerificationRequest createVerificationRequest(final long verifiableDataId, final Date tokenValidityEndDate,
             final long verificationLength, final VerificationLengthBase verificationLengthBase);
@@ -71,11 +71,12 @@ public interface VerifyService {
      * Get verification end date of the verifiable data.
      * 
      * @param verifiableDataId
-     *            the id of the verifiable data. Cannot be <code>null</code>.
+     *            the id of the verifiable data. Must be exist verifiable data.
      * @return the verification end data if bigger than actual date otherwise <code>null</code>.
      * 
      * @throws IllegalArgumentException
-     *             if the not exist verifiable data or the verifiable data id is <code>null</code>.
+     *             if the not exist verifiable data or the verifiable data id is <code>null</code> or the verifiable
+     *             data is not exist.
      */
     Date getVerificationEndDate(long verifiableDataId);
 
@@ -83,15 +84,15 @@ public interface VerifyService {
      * It cuts down on a verified end date to the given date.
      * 
      * @param verifiableDataId
-     *            the id of the verifiable data. Cannot be <code>null</code>.
+     *            the id of the verifiable data. Must be valid id. Must be exist verifiable data.
      * @param verificationEndDate
      *            the new verification date. Cannot be <code>null</code>.
-     * @return <code>true</code> if the cuts down successful ready. Return <code>false</code> If the specified date
+     * @return <code>true</code> if the cuts down successful ready. Return <code>false</code> if the specified date
      *         preceded in original date.
-     * 
      * @throws IllegalArgumentException
-     *             if the verificationEndDate before the actual date or the verificationEndDate is not reduce the
-     *             verification end date or if one parameter is <code>null</code>.
+     *             if the verificationEndDate before than actual date or the verificationEndDate is not reduce the
+     *             verification end date or if one parameter is <code>null</code> or the verifiable data is not exits or
+     *             the verifiable data is not exist.
      */
     boolean reduceVerificationEndDate(final long verifiableDataId, final Date verificationEndDate);
 
@@ -99,10 +100,11 @@ public interface VerifyService {
      * Revoke the verification request.
      * 
      * @param verificationRequestId
-     *            the id of the verification request.
+     *            the id of the verification request. Must be exist verifiable request.
      * 
      * @throws IllegalArgumentException
-     *             if the parameter is <code>null</code>.
+     *             if the parameter is <code>null</code> or the verifiable data is not exits or the verifiable request
+     *             is not exist.
      */
     void revokeVerificationRequest(long verificationRequestId);
 
@@ -111,7 +113,7 @@ public interface VerifyService {
      * 
      * @param token
      *            the token. Cannot be <code>null</code>.
-     * @return the {@link VerificationRequest} object.
+     * @return the {@link VerificationRequest} object. If the token invalid return <code>null</code>.
      * 
      * @throws IllegalArgumentException
      *             if parameter is <code>null</code>.

@@ -21,15 +21,15 @@ package org.everit.verifiabledata.itests.core;
  * MA 02110-1301  USA
  */
 
-import org.everit.verifiabledata.api.VerifyService;
+
 
 public class VerifyTestImpl implements VerifyTest {
 
-    private VerifyService verifyService;
+    // private VerifyService verifyService;
 
-    public void setVerifyService(final VerifyService verifyService) {
-        this.verifyService = verifyService;
-    }
+    // public void setVerifyService(final VerifyService verifyService) {
+    // this.verifyService = verifyService;
+    // }
 
     @Override
     public void testCreate() {

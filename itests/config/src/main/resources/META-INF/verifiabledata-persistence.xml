@@ -27,8 +27,8 @@
 
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
 
-        <class>org.everit.verifiabledata.entity.VerifyDataEntity</class>
-        <class>org.everit.verifiabledata.entity.VerifyProcessEntity</class>
+        <class>org.everit.verifiabledata.entity.VerifiableDataEntity</class>
+        <class>org.everit.verifiabledata.entity.VerificationRequestEntity</class>
 
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
 
