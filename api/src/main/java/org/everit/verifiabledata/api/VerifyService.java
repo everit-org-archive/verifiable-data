@@ -86,13 +86,12 @@ public interface VerifyService {
      * @param verifiableDataId
      *            the id of the verifiable data. Must be valid id. Must be exist verifiable data.
      * @param verificationEndDate
-     *            the new verification date. Cannot be <code>null</code>.
+     *            the new verification date.
      * @return <code>true</code> if the cuts down successful ready. Return <code>false</code> if the specified date
      *         preceded in original date.
      * @throws IllegalArgumentException
-     *             if the verificationEndDate before than actual date or the verificationEndDate is not reduce the
-     *             verification end date or if one parameter is <code>null</code> or the verifiable data is not exits or
-     *             the verifiable data is not exist.
+     *             if the verificationEndDate before than actual date or the verifiable data is not exits or the
+     *             verifiable data is not exist.
      */
     boolean reduceVerificationEndDate(final long verifiableDataId, final Date verificationEndDate);
 

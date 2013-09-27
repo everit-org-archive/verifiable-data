@@ -229,9 +229,9 @@ public class VerifyServiceImpl implements VerifyService {
     @Override
     public boolean reduceVerificationEndDate(final long verifiableDataId, final Date verificationEndDate) {
         Date actualDate = new Date();
+        Date usageVerificationEndDate = verificationEndDate;
         if ((verificationEndDate == null)) {
-            throw new IllegalArgumentException(
-                    "The verificationEndDate paramter is null. Cannot be null the paramters.");
+            usageVerificationEndDate = new Date();
         } else if (actualDate.getTime() > verificationEndDate.getTime()) {
             throw new IllegalArgumentException("The verification end date is smaller than actual date.");
         }
@@ -239,16 +239,13 @@ public class VerifyServiceImpl implements VerifyService {
         boolean reduce = false;
         VerifiableDataEntity verifiableDataEntity = findVerifiableDataEntityById(verifiableDataId);
         if (verifiableDataEntity != null) {
-            if (verificationEndDate.getTime() > verifiableDataEntity.getVerifiedUntil().getTime()) {
-                throw new IllegalArgumentException(
-                        "The new verification end date is bigger than older verification end date.");
-            } else {
-                verifiableDataEntity.setVerifiedUntil(verificationEndDate);
+            if (usageVerificationEndDate.getTime() < verifiableDataEntity.getVerifiedUntil().getTime()) {
+                verifiableDataEntity.setVerifiedUntil(usageVerificationEndDate);
                 em.merge(verifiableDataEntity);
 
                 List<VerificationRequestEntity> verificationRequestEntities = findVerificationRequestEntitiesByVerifiableDataId(verifiableDataId);
                 for (VerificationRequestEntity vre : verificationRequestEntities) {
-                    long verificationLength = verificationEndDate.getTime()
+                    long verificationLength = usageVerificationEndDate.getTime()
                             - tokenService.getToken(vre.getToken().getTokenUuid()).getCreationDate().getTime();
                     vre.setVerificationLength(verificationLength);
                     em.merge(vre);
