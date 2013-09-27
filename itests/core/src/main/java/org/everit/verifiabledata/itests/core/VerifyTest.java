@@ -35,5 +35,8 @@ public interface VerifyTest {
     void testReduceVerificationEndDate();
 
     @Test
+    void testRevokeVerificationRequest();
+
+    @Test
     void testVerifyData();
 }

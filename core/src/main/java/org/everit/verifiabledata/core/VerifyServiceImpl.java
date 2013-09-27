@@ -91,7 +91,8 @@ public class VerifyServiceImpl implements VerifyService {
         em.persist(verificationRequestEntity);
         em.flush();
 
-        VerificationRequest verificationRequest = new VerificationRequest(tokenUuid, tokenUuid);
+        VerificationRequest verificationRequest = new VerificationRequest(
+                verificationRequestEntity.getVerificationRequestId(), tokenUuid, tokenUuid);
         VerifiableDataCreation verifiableDataCreation = new VerifiableDataCreation(
                 verifiableDataEntity.getVerifiableDataId(), verificationRequest);
         return verifiableDataCreation;
@@ -108,7 +109,7 @@ public class VerifyServiceImpl implements VerifyService {
             throw new IllegalArgumentException("Must be positive the verificationLength.");
         }
 
-        VerificationRequest verificationRequest = new VerificationRequest(null, null);
+        VerificationRequest verificationRequest = new VerificationRequest(0L, null, null);
         VerifiableDataEntity verifiableDataEntity = findVerifiableDataEntityById(verifiableDataId);
         if (verifiableDataEntity != null) {
             em.lock(verifiableDataEntity, LockModeType.PESSIMISTIC_READ);
@@ -140,8 +141,10 @@ public class VerifyServiceImpl implements VerifyService {
             em.merge(verifiableDataEntity);
             em.flush();
 
+            verificationRequest.setVerificationRequestId(verificationRequestEntity.getVerificationRequestId());
             verificationRequest.setRejectTokenUUID(tokenUuid);
             verificationRequest.setVerifyTokenUUID(tokenUuid);
+
         } else {
             throw new IllegalArgumentException("The verifiable data is not exist.");
         }

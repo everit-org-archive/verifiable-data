@@ -378,6 +378,90 @@ public class VerifyTestImpl implements VerifyTest {
     }
 
     @Override
+    public void testRevokeVerificationRequest() {
+        List<VerifiableDataCreation> verifiableDataCreationsExpired = new ArrayList<VerifiableDataCreation>();
+        for (int i = 0; i < CONSTANT; i++) {
+            Date actualDate = new Date();
+            long time = actualDate.getTime() + (4 * CONSTANT);
+            Date tokenValidityEndDate = new Date(time);
+            long verificationLength = CONSTANT / CONSTANT;
+            VerifiableDataCreation createVerifiableData = verifyService.createVerifiableData(tokenValidityEndDate,
+                    verificationLength,
+                    getRandomVerificationLengthBase());
+            Assert.assertNotNull(createVerifiableData);
+            verifiableDataCreationsExpired.add(createVerifiableData);
+        }
+
+        List<VerifiableDataCreation> createVerifiableDataCreation = createVerifiableDataCreation();
+        for (VerifiableDataCreation vdc : createVerifiableDataCreation) {
+            Date actualDate = new Date();
+            long time = actualDate.getTime() + (4 * CONSTANT);
+            Date tokenValidityEndDate = new Date(time);
+            long verificationLength = CONSTANT / CONSTANT;
+            VerificationRequest createVerificationRequest = verifyService.createVerificationRequest(
+                    vdc.getVerifiableDataId(),
+                    tokenValidityEndDate,
+                    verificationLength,
+                    getRandomVerificationLengthBase());
+            Assert.assertNotNull(createVerificationRequest);
+            VerifiableDataCreation verifiableDataCreation = new VerifiableDataCreation(vdc.getVerifiableDataId(),
+                    createVerificationRequest);
+            verifiableDataCreationsExpired.add(verifiableDataCreation);
+        }
+
+        List<VerifiableDataCreation> verifiableDataCreations = createVerifiableDataCreation();
+        verifiableDataCreations.addAll(createVerifiableDataCreation());
+        verifiableDataCreations.addAll(createVerifiableDataCreation());
+        verifiableDataCreations.addAll(createVerifiableDataCreation());
+        verifiableDataCreations.addAll(createVerifiableDataCreation());
+        verifiableDataCreations.addAll(createVerifiableDataCreation());
+
+        for (VerifiableDataCreation vdc : verifiableDataCreations) {
+            verifyService.revokeVerificationRequest(vdc.getVerificationRequest().getVerificationRequestId());
+
+            try {
+                verifyService.revokeVerificationRequest(vdc.getVerificationRequest().getVerificationRequestId());
+            } catch (IllegalArgumentException e) {
+                Assert.assertNotNull(e);
+            }
+
+            try {
+                verifyService.revokeVerificationRequest(0L);
+            } catch (IllegalArgumentException e) {
+                Assert.assertNotNull(e);
+            }
+
+            try {
+                verifyService.revokeVerificationRequest(-1L);
+            } catch (IllegalArgumentException e) {
+                Assert.assertNotNull(e);
+            }
+        }
+
+        for (VerifiableDataCreation vdc : verifiableDataCreationsExpired) {
+            verifyService.revokeVerificationRequest(vdc.getVerificationRequest().getVerificationRequestId());
+            try {
+                verifyService.revokeVerificationRequest(vdc.getVerificationRequest().getVerificationRequestId());
+            } catch (IllegalArgumentException e) {
+                Assert.assertNotNull(e);
+            }
+
+            try {
+                verifyService.revokeVerificationRequest(0L);
+            } catch (IllegalArgumentException e) {
+                Assert.assertNotNull(e);
+            }
+
+            try {
+                verifyService.revokeVerificationRequest(-1L);
+            } catch (IllegalArgumentException e) {
+                Assert.assertNotNull(e);
+            }
+        }
+
+    }
+
+    @Override
     public void testVerifyData() {
         List<VerifiableDataCreation> verifiableDataCreationsExpired = new ArrayList<VerifiableDataCreation>();
         for (int i = 0; i < CONSTANT; i++) {
