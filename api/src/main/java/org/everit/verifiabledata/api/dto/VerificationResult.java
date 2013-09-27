@@ -23,12 +23,29 @@ package org.everit.verifiabledata.api.dto;
 
 import org.everit.verifiabledata.api.enums.TokenUsageResult;
 
+/**
+ * Information of the verification result.
+ */
 public class VerificationResult {
 
+    /**
+     * The id of the verifiable data.
+     */
     private Long verifiableDataId;
 
+    /**
+     * The token usage result.
+     */
     private TokenUsageResult tokenUsageResult;
 
+    /**
+     * The simple constructor.
+     * 
+     * @param verifiableDataId
+     *            the id of the verifiable data.
+     * @param tokenUsageResult
+     *            the token usage result.
+     */
     public VerificationResult(final Long verifiableDataId, final TokenUsageResult tokenUsageResult) {
         super();
         this.verifiableDataId = verifiableDataId;

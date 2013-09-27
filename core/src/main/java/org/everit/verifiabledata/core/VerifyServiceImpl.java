@@ -27,6 +27,9 @@ import javax.persistence.EntityManager;
 
 import org.everit.verifiabledata.api.VerifyService;
 import org.everit.verifiabledata.api.dto.VerifiableDataCreation;
+import org.everit.verifiabledata.api.dto.VerificationRequest;
+import org.everit.verifiabledata.api.dto.VerificationResult;
+import org.everit.verifiabledata.api.enums.VerificationLengthBase;
 
 public class VerifyServiceImpl implements VerifyService {
 
@@ -36,39 +39,48 @@ public class VerifyServiceImpl implements VerifyService {
     private EntityManager em;
 
     @Override
-    public VerifiableDataCreation createVerifiableData(final Date tokenValidityEndDate) {
-        // VerifiableDateEntity verifyDataEntity = new VerifiableDateEntity();
-        // verifyDataEntity.setStatusValidityDate(tokenValidityEndDate);
-        // verifyDataEntity.setStatus(VerifyDataStatus.WAITING_VERIFICATION);
-        // em.persist(verifyDataEntity);
-        // em.flush();
-        // verifyDataEntity.getVerifiableDataId();
-        // VerificationRequest verifyProcessEntity = new VerificationRequest();
-        // verifyProcessEntity.setTokenValidityEndDate(tokenValidityEndDate);
-        // verifyProcessEntity.setVerifyData(verifyDataEntity);
-        // em.persist(verifyProcessEntity);
-        // em.flush();
-        // VerifiableDataCreation verifiableDataCreation = new VerifiableDataCreation(
-        // verifyDataEntity.getVerifiableDataId(), "", "");
-        // return verifiableDataCreation;
+    public VerifiableDataCreation createVerifiableData(final Date tokenValidityEndDate, final long verificationLength,
+            final VerificationLengthBase verificationLengthBase) {
+        if ((tokenValidityEndDate == null) || (verificationLengthBase == null)) {
+            throw new IllegalArgumentException("The one paramter is null. Cannot be null the paramters.");
+        }
+
         return null;
     }
 
     @Override
-    public VerifiableDataCreation select(final long id) {
-        // System.out.println("--------------------");
-        // System.out.println("id: " + id);
-        // VerifiableDateEntity find = em.find(VerifiableDateEntity.class, id);
-        // System.out.println("--------------------");
-        // System.out.println("status: " + find.getStatus());
-        // VerifiableDataCreation verifiableDataCreation = new VerifiableDataCreation(
-        // find.getVerifiableDataId(), "", "");
-        // return verifiableDataCreation;
+    public VerificationRequest createVerificationRequest(final long verifiableDataId, final Date tokenValidityEndDate,
+            final long verificationLength, final VerificationLengthBase verificationLengthBase) {
+        // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public Date getVerificationEndDate(final long verifiableDataId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean reduceVerificationEndDate(final long verifiableDataId, final Date verificationEndDate) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void revokeVerificationRequest(final long verificationRequestId) {
+        // TODO Auto-generated method stub
+
     }
 
     public void setEm(final EntityManager em) {
         this.em = em;
+    }
+
+    @Override
+    public VerificationResult verifyData(final String token) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

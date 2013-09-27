@@ -21,10 +21,7 @@ package org.everit.verifiabledata.itests.core;
  * MA 02110-1301  USA
  */
 
-import java.util.Date;
-
 import org.everit.verifiabledata.api.VerifyService;
-import org.everit.verifiabledata.api.dto.VerifiableDataCreation;
 
 public class VerifyTestImpl implements VerifyTest {
 
@@ -36,16 +33,16 @@ public class VerifyTestImpl implements VerifyTest {
 
     @Override
     public void testCreate() {
-        VerifiableDataCreation createVerifiableData = verifyService.createVerifiableData(new Date());
-        System.out.println("Create id: " + createVerifiableData.getVerifiableDataId());
+        // VerifiableDataCreation createVerifiableData = verifyService.createVerifiableData(new Date());
+        // System.out.println("Create id: " + createVerifiableData.getVerifiableDataId());
     }
 
     @Override
     public void testSelect() {
-        // VerifiableDataCreation createVerifiableData = verifyService.createVerifiableData(new Date());
-        // String write = "Create id: " + createVerifiableData.getVerifiableDataId();
-        VerifiableDataCreation select = verifyService.select(1);
-        String write = "\t select id: " + select.getVerifiableDataId();
-        System.out.println(write);
+        // // VerifiableDataCreation createVerifiableData = verifyService.createVerifiableData(new Date());
+        // // String write = "Create id: " + createVerifiableData.getVerifiableDataId();
+        // VerifiableDataCreation select = verifyService.select(1);
+        // String write = "\t select id: " + select.getVerifiableDataId();
+        // System.out.println(write);
     }
 }

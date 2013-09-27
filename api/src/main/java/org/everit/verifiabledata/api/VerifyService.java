@@ -3,6 +3,9 @@ package org.everit.verifiabledata.api;
 import java.util.Date;
 
 import org.everit.verifiabledata.api.dto.VerifiableDataCreation;
+import org.everit.verifiabledata.api.dto.VerificationRequest;
+import org.everit.verifiabledata.api.dto.VerificationResult;
+import org.everit.verifiabledata.api.enums.VerificationLengthBase;
 
 /*
  * Copyright (c) 2011, Everit Kft.
@@ -27,8 +30,92 @@ import org.everit.verifiabledata.api.dto.VerifiableDataCreation;
 
 public interface VerifyService {
 
-    VerifiableDataCreation createVerifiableData(Date tokenValidityEndDate);
+    /**
+     * Create a new verifiable data and request.
+     * 
+     * @param tokenValidityEndDate
+     *            the expiration date of the token. Cannot be <code>null</code>.
+     * @param verificationLength
+     *            the verification length in seconds.
+     * @param verificationLengthBase
+     *            the {@link VerificationLengthBase} that is valid for the request. Cannot be <code>null</code>.
+     * @return the {@link VerifiableDataCreation} object. If not created the verifiable data return <code>null</code>.
+     * 
+     * @throws IllegalArgumentException
+     *             if one parameter is <code>null</code>.
+     **/
+    VerifiableDataCreation createVerifiableData(final Date tokenValidityEndDate, final long verificationLength,
+            final VerificationLengthBase verificationLengthBase);
 
-    VerifiableDataCreation select(long id);
+    /**
+     * Create a new verification request in exist verifiable data. All existing verifiable that belongs to the
+     * verifiable date request is withdraw.
+     * 
+     * @param verifiableDataId
+     *            the id of the verifiable data.
+     * @param tokenValidityEndDate
+     *            the expiration date of the token. Cannot be <code>null</code>.
+     * @param verificationLength
+     *            the verification length in seconds. Cannot be <code>null</code>.
+     * @param verificationLengthBase
+     *            the {@link VerificationLengthBase} that is valid for the request. Cannot be <code>null</code>.
+     * @return the {@link VerificationRequest} object. If not creating the verifiable request return <code>null</code>.
+     * 
+     * @throws IllegalArgumentException
+     *             if one parameter is <code>null</code>.
+     */
+    VerificationRequest createVerificationRequest(final long verifiableDataId, final Date tokenValidityEndDate,
+            final long verificationLength, final VerificationLengthBase verificationLengthBase);
+
+    /**
+     * Get verification end date of the verifiable data.
+     * 
+     * @param verifiableDataId
+     *            the id of the verifiable data. Cannot be <code>null</code>.
+     * @return the verification end data if bigger than actual date otherwise <code>null</code>.
+     * 
+     * @throws IllegalArgumentException
+     *             if the not exist verifiable data or the verifiable data id is <code>null</code>.
+     */
+    Date getVerificationEndDate(long verifiableDataId);
+
+    /**
+     * It cuts down on a verified end date to the given date.
+     * 
+     * @param verifiableDataId
+     *            the id of the verifiable data. Cannot be <code>null</code>.
+     * @param verificationEndDate
+     *            the new verification date. Cannot be <code>null</code>.
+     * @return <code>true</code> if the cuts down successful ready. Return <code>false</code> If the specified date
+     *         preceded in original date.
+     * 
+     * @throws IllegalArgumentException
+     *             if the verificationEndDate before the actual date or the verificationEndDate is not reduce the
+     *             verification end date or if one parameter is <code>null</code>.
+     */
+    boolean reduceVerificationEndDate(final long verifiableDataId, final Date verificationEndDate);
+
+    /**
+     * Revoke the verification request.
+     * 
+     * @param verificationRequestId
+     *            the id of the verification request.
+     * 
+     * @throws IllegalArgumentException
+     *             if the parameter is <code>null</code>.
+     */
+    void revokeVerificationRequest(long verificationRequestId);
+
+    /**
+     * Verifying the data.
+     * 
+     * @param token
+     *            the token. Cannot be <code>null</code>.
+     * @return the {@link VerificationRequest} object.
+     * 
+     * @throws IllegalArgumentException
+     *             if parameter is <code>null</code>.
+     */
+    VerificationResult verifyData(final String token);
 
 }

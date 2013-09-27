@@ -36,6 +36,14 @@ public class VerifiableDataCreation {
      */
     private VerificationRequest verificationRequest;
 
+    /**
+     * The simple constructor.
+     * 
+     * @param verifiableDataId
+     *            the id of the verifiable data.
+     * @param verificationRequest
+     *            the verification request.
+     */
     public VerifiableDataCreation(final long verifiableDataId, final VerificationRequest verificationRequest) {
         super();
         this.verifiableDataId = verifiableDataId;

@@ -32,6 +32,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.everit.token.entity.TokenEntity;
 import org.everit.verifiabledata.api.enums.VerificationLengthBase;
 
 /**
@@ -58,8 +59,10 @@ public class VerificationRequestEntity {
     /**
      * The token UUID of the verification request.
      */
-    @Column(name = "TOKEN_UUID")
-    private String tokenUuid;
+    @ManyToOne
+    @JoinColumn(name = "TOKEN_UUID")
+    private TokenEntity token;
+
     /**
      * The type of {@link VerificationLengthBase}.
      */
@@ -95,18 +98,18 @@ public class VerificationRequestEntity {
      *            the verifiable data object of the verification request.
      */
     public VerificationRequestEntity(final long verificationRequestId, final long verificationLength,
-            final String tokenUuid,
+            final TokenEntity tokenUuid,
             final VerificationLengthBase verificationLengthBase, final VerifiableDataEntity verifiableData) {
         super();
         this.verificationRequestId = verificationRequestId;
         this.verificationLength = verificationLength;
-        this.tokenUuid = tokenUuid;
+        token = tokenUuid;
         this.verificationLengthBase = verificationLengthBase;
         this.verifiableData = verifiableData;
     }
 
-    public String getTokenUuid() {
-        return tokenUuid;
+    public TokenEntity getToken() {
+        return token;
     }
 
     public VerifiableDataEntity getVerifiableData() {
@@ -125,8 +128,8 @@ public class VerificationRequestEntity {
         return verificationRequestId;
     }
 
-    public void setTokenUuid(final String tokenUuid) {
-        this.tokenUuid = tokenUuid;
+    public void setToken(final TokenEntity token) {
+        this.token = token;
     }
 
     public void setVerifiableData(final VerifiableDataEntity verifiableData) {
