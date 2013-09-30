@@ -1,4 +1,4 @@
-package org.everit.verifiabledata.api.enums;
+package org.everit.verifiabledata.itests.core;
 
 /*
  * Copyright (c) 2011, Everit Kft.
@@ -21,23 +21,46 @@ package org.everit.verifiabledata.api.enums;
  * MA 02110-1301  USA
  */
 
+import org.junit.Test;
+
 /**
- * Enumeration of token status.
+ * Test interface for testing {@link VerifyService}.
  */
-public enum TokenUsageResult {
+public interface VerifyTest {
 
     /**
-     * The token has been expired.
+     * Testing the create methods.
      */
-    EXPIRED,
+    @Test
+    void testCreates();
 
     /**
-     * The token is verified.
+     * Testing getVerificationEndDate method.
      */
-    VERIFIED,
+    @Test
+    void testGetVerificationEndDate();
 
     /**
-     * The token has been rejected.
+     * Testing invalidateData method.
      */
-    REJECTED;
+    @Test
+    void testInvalidateData();
+
+    /**
+     * Testing the reduceVerificationEndDate method.
+     */
+    @Test
+    void testReduceVerificationEndDate();
+
+    /**
+     * Testing the rejected token.
+     */
+    @Test
+    void testRejectedRequest();
+
+    /**
+     * Testing verifyData method.
+     */
+    @Test
+    void testVerifyData();
 }

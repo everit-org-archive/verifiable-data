@@ -21,41 +21,43 @@ package org.everit.verifiabledata.api.dto;
  * MA 02110-1301  USA
  */
 
+import org.everit.verifiabledata.api.enums.TokenUsageResult;
+
 /**
- * Information of the verifiable data.
+ * Information of the verification result.
  */
-public final class VerifiableDataCreation {
+public final class VerificationResult {
 
     /**
      * The id of the verifiable data.
      */
-    private final long verifiableDataId;
+    private final Long verifiableDataId;
 
     /**
-     * The verification request.
+     * The token usage result.
      */
-    private final VerificationRequest verificationRequest;
+    private final TokenUsageResult tokenUsageResult;
 
     /**
      * The simple constructor.
      * 
      * @param verifiableDataId
      *            the id of the verifiable data.
-     * @param verificationRequest
-     *            the verification request.
+     * @param tokenUsageResult
+     *            the token usage result.
      */
-    public VerifiableDataCreation(final long verifiableDataId, final VerificationRequest verificationRequest) {
+    public VerificationResult(final Long verifiableDataId, final TokenUsageResult tokenUsageResult) {
         super();
         this.verifiableDataId = verifiableDataId;
-        this.verificationRequest = verificationRequest;
+        this.tokenUsageResult = tokenUsageResult;
     }
 
-    public long getVerifiableDataId() {
+    public TokenUsageResult getTokenUsageResult() {
+        return tokenUsageResult;
+    }
+
+    public Long getVerifiableDataId() {
         return verifiableDataId;
-    }
-
-    public VerificationRequest getVerificationRequest() {
-        return verificationRequest;
     }
 
 }

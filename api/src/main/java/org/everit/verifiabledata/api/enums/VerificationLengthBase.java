@@ -22,22 +22,18 @@ package org.everit.verifiabledata.api.enums;
  */
 
 /**
- * Enumeration of token status.
+ * Enumeration of verification length base.
  */
-public enum TokenUsageResult {
+public enum VerificationLengthBase {
 
     /**
-     * The token has been expired.
+     * The verification_length counted from the time of the creation of the application.
      */
-    EXPIRED,
+    REQUEST_CREATION,
 
     /**
-     * The token is verified.
+     * The verification_length is calculated from the date of verification.
      */
-    VERIFIED,
+    VERIFICATION;
 
-    /**
-     * The token has been rejected.
-     */
-    REJECTED;
 }

@@ -1,4 +1,4 @@
-package org.everit.verifiabledata.api.dto;
+package org.everit.verifiabledata.api.exception;
 
 /*
  * Copyright (c) 2011, Everit Kft.
@@ -22,40 +22,41 @@ package org.everit.verifiabledata.api.dto;
  */
 
 /**
- * Information of the verifiable data.
+ * NoSuchVerifiableDataException is throw when the verifiable data is not exist in the database.
  */
-public final class VerifiableDataCreation {
+public class NoSuchVerifiableDataException extends Exception {
 
     /**
-     * The id of the verifiable data.
+     * The generated serial version UID.
      */
-    private final long verifiableDataId;
+    private static final long serialVersionUID = 2453033101894377377L;
 
     /**
-     * The verification request.
+     * The default constructor.
      */
-    private final VerificationRequest verificationRequest;
+    public NoSuchVerifiableDataException() {
+        super("Not exitst the verifiable data.");
+    }
 
     /**
      * The simple constructor.
      * 
-     * @param verifiableDataId
-     *            the id of the verifiable data.
-     * @param verificationRequest
-     *            the verification request.
+     * @param msg
+     *            the error message.
      */
-    public VerifiableDataCreation(final long verifiableDataId, final VerificationRequest verificationRequest) {
-        super();
-        this.verifiableDataId = verifiableDataId;
-        this.verificationRequest = verificationRequest;
+    public NoSuchVerifiableDataException(final String msg) {
+        super(msg);
     }
 
-    public long getVerifiableDataId() {
-        return verifiableDataId;
+    /**
+     * The simple constructor.
+     * 
+     * @param msg
+     *            the error message.
+     * @param e
+     *            the {@link Throwable} object.
+     */
+    public NoSuchVerifiableDataException(final String msg, final Throwable e) {
+        super(msg, e);
     }
-
-    public VerificationRequest getVerificationRequest() {
-        return verificationRequest;
-    }
-
 }

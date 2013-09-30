@@ -27,16 +27,16 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.everit</groupId>
-        <artifactId>verifiabledata</artifactId>
+        <groupId>org.everit.verifiabledata</groupId>
+        <artifactId>itests</artifactId>
         <version>0.1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.everit.verifiabledata</groupId>
-    <artifactId>org.everit.verifiabledata.entity</artifactId>
+    <groupId>org.everit.verifiabledata.itests</groupId>
+    <artifactId>org.everit.verifiabledata.itests.config</artifactId>
 
     <packaging>bundle</packaging>
-    <name>Everit verifiableData Entity</name>
+    <name>Everit verifiableData itest Config</name>
     <description>Everit verifiableData</description>
 
     <build>
@@ -49,10 +49,15 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Import-Package>
+                            org.everit.token.entity,
+                            org.everit.verifiabledata.entity,
+                            org.everit.verifiabledata.api.enums,
+                            !org.osgi.service.blueprint,
+                            javax.transaction.*;version="[1.1,2)",
                             *
                         </Import-Package>
-                        <Export-Package>${project.artifactId}</Export-Package>
-                        <Meta-Persistence>META-INF/persistence.xml</Meta-Persistence>
+                        <Export-Package />
+                        <Meta-Persistence>META-INF/verifiabledata-persistence.xml</Meta-Persistence>
                     </instructions>
                 </configuration>
             </plugin>
@@ -60,27 +65,37 @@
     </build>
 
     <dependencies>
+
         <dependency>
-            <groupId>javax.persistence</groupId>
-            <artifactId>com.springsource.javax.persistence</artifactId>
-            <version>2.0.0</version>
-            <scope>provided</scope>
+            <groupId>org.everit.verifiabledata</groupId>
+            <artifactId>org.everit.verifiabledata.entity</artifactId>
+            <version>${project.version}</version>
+            <exclusions> 
+                <exclusion>
+                    <artifactId>com.springsource.javax.transaction</artifactId>
+                    <groupId>javax.transaction</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
+        
         <dependency>
             <groupId>org.everit.verifiabledata</groupId>
             <artifactId>org.everit.verifiabledata.api</artifactId>
             <version>${project.version}</version>
         </dependency>
+
         <dependency>
-            <groupId>org.everit.token</groupId>
-            <artifactId>org.everit.token.entity</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <version>4.2.0</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.everit.resource</groupId>
-            <artifactId>org.everit.resource.entity</artifactId>
-            <version>0.5.0</version>
+            <groupId>org.everit.osgi.jdbc</groupId>
+            <artifactId>org.everit.osgi.jdbc.h2</artifactId>
+            <version>1.0.0</version>
         </dependency>
+
     </dependencies>
 </project>
