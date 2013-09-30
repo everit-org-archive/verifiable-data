@@ -49,6 +49,9 @@ import org.everit.verifiabledata.api.enums.VerificationLengthBase;
  * MA 02110-1301  USA
  */
 
+/**
+ * Service for managing the verifying function.
+ */
 public interface VerifyService {
 
     /**

@@ -44,6 +44,9 @@ import org.everit.verifiabledata.entity.VerifiableDataEntity;
 import org.everit.verifiabledata.entity.VerificationRequestEntity;
 import org.everit.verifiabledata.entity.VerificationRequestEntity_;
 
+/**
+ * Implementation of {@link VerifyService}.
+ */
 public class VerifyServiceImpl implements VerifyService {
 
     /**
@@ -51,6 +54,9 @@ public class VerifyServiceImpl implements VerifyService {
      */
     private EntityManager em;
 
+    /**
+     * The {@link TokenService} instance.
+     */
     private TokenService tokenService;
 
     /**
@@ -151,7 +157,17 @@ public class VerifyServiceImpl implements VerifyService {
         return verificationRequest;
     }
 
+    /**
+     * Determine the token usage result value.
+     * 
+     * @param token
+     *            the {@link Token} object. Cannot be <code>null</code>.
+     * @return the correct {@link TokenUsageResult} value.
+     */
     private TokenUsageResult determineTokenUsageResult(final Token token) {
+        if ((token == null)) {
+            throw new IllegalArgumentException("The one paramter is null. Cannot be null the paramters.");
+        }
         TokenUsageResult result = null;
         Date actualDate = new Date();
         Date dateOfUse = token.getDateOfUse();

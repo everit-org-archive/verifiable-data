@@ -21,22 +21,41 @@ package org.everit.verifiabledata.itests.core;
  * MA 02110-1301  USA
  */
 
+import org.everit.verifiabledata.api.VerifyService;
 import org.junit.Test;
 
+/**
+ * Test interface for testing {@link VerifyService}.
+ */
 public interface VerifyTest {
 
+    /**
+     * Testing the create methods.
+     */
     @Test
     void testCreates();
 
+    /**
+     * Testing getVerificationEndDate method.
+     */
     @Test
     void testGetVerificationEndDate();
 
+    /**
+     * Testing the reduceVerificationEndDate method.
+     */
     @Test
     void testReduceVerificationEndDate();
 
+    /**
+     * Testing revokeVerificationrequest method.
+     */
     @Test
     void testRevokeVerificationRequest();
 
+    /**
+     * Testing verifyData method.
+     */
     @Test
     void testVerifyData();
 }
