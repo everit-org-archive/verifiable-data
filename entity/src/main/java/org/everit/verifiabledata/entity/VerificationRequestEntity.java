@@ -57,11 +57,18 @@ public class VerificationRequestEntity {
     private long verificationLength;
 
     /**
-     * The token UUID of the verification request.
+     * The verify token UUID of the verification request.
      */
     @ManyToOne
-    @JoinColumn(name = "TOKEN_UUID")
-    private TokenEntity token;
+    @JoinColumn(name = "VERIFY_TOKEN_UUID", referencedColumnName = "TOKEN_UUID")
+    private TokenEntity verifyTokenUUID;
+
+    /**
+     * The reject token UUID of the verification request.
+     */
+    @ManyToOne
+    @JoinColumn(name = "REJECT_TOKEN_UUID", referencedColumnName = "TOKEN_UUID")
+    private TokenEntity rejectTokenUUID;
 
     /**
      * The type of {@link VerificationLengthBase}.
@@ -84,32 +91,36 @@ public class VerificationRequestEntity {
     }
 
     /**
-     * The simple constructor.
+     * * The simple constructor.
      * 
      * @param verificationRequestId
      *            the id of the verification request.
      * @param verificationLength
      *            the length of the verification request.
-     * @param tokenUuid
-     *            the token UUID of the verification request.
+     * @param verifyTokenUUID
+     *            the verify token UUID of the verification request.
+     * @param rejectTokenUUID
+     *            the reject token UUID of the verification request.
      * @param verificationLengthBase
      *            the verification length base of the verification request.
      * @param verifiableData
      *            the verifiable data object of the verification request.
      */
     public VerificationRequestEntity(final long verificationRequestId, final long verificationLength,
-            final TokenEntity tokenUuid,
-            final VerificationLengthBase verificationLengthBase, final VerifiableDataEntity verifiableData) {
+            final TokenEntity verifyTokenUUID,
+            final TokenEntity rejectTokenUUID, final VerificationLengthBase verificationLengthBase,
+            final VerifiableDataEntity verifiableData) {
         super();
         this.verificationRequestId = verificationRequestId;
         this.verificationLength = verificationLength;
-        token = tokenUuid;
+        this.verifyTokenUUID = verifyTokenUUID;
+        this.rejectTokenUUID = rejectTokenUUID;
         this.verificationLengthBase = verificationLengthBase;
         this.verifiableData = verifiableData;
     }
 
-    public TokenEntity getToken() {
-        return token;
+    public TokenEntity getRejectTokenUUID() {
+        return rejectTokenUUID;
     }
 
     public VerifiableDataEntity getVerifiableData() {
@@ -128,8 +139,12 @@ public class VerificationRequestEntity {
         return verificationRequestId;
     }
 
-    public void setToken(final TokenEntity token) {
-        this.token = token;
+    public TokenEntity getVerifyTokenUUID() {
+        return verifyTokenUUID;
+    }
+
+    public void setRejectTokenUUID(final TokenEntity rejectTokenUUID) {
+        this.rejectTokenUUID = rejectTokenUUID;
     }
 
     public void setVerifiableData(final VerifiableDataEntity verifiableData) {
@@ -146,6 +161,10 @@ public class VerificationRequestEntity {
 
     public void setVerificationRequestId(final long verificationRequestId) {
         this.verificationRequestId = verificationRequestId;
+    }
+
+    public void setVerifyTokenUUID(final TokenEntity verifyTokenUUID) {
+        this.verifyTokenUUID = verifyTokenUUID;
     }
 
 }

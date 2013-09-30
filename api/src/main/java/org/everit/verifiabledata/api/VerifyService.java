@@ -106,6 +106,15 @@ public interface VerifyService {
     Date getVerificationEndDate(long verifiableDataId);
 
     /**
+     * The verifiable data records virifyUntil field set to actual date and revoke the active verification request
+     * records.
+     * 
+     * @param verifiableDataId
+     *            the id of the verifiable data.
+     */
+    void invalidateData(long verifiableDataId);
+
+    /**
      * It cuts down on a verified end date to the given date.
      * 
      * @param verifiableDataId
@@ -121,27 +130,13 @@ public interface VerifyService {
     boolean reduceVerificationEndDate(final long verifiableDataId, final Date verificationEndDate);
 
     /**
-     * Revoke the verification request.
-     * 
-     * @param verificationRequestId
-     *            the id of the verification request. Must be exist verifiable request.
-     * 
-     * @throws IllegalArgumentException
-     *             if the parameter is <code>null</code> or the verifiable data is not exits or the verifiable request
-     *             is not exist.
-     */
-    void revokeVerificationRequest(long verificationRequestId);
-
-    /**
      * Verifying the data.
      * 
      * @param token
      *            the token. Cannot be <code>null</code>.
-     * @return the {@link VerificationRequest} object. If the token invalid return <code>null</code>.
-     * 
+     * @return the {@link VerificationRequest} object.
      * @throws IllegalArgumentException
      *             if parameter is <code>null</code>.
      */
     VerificationResult verifyData(final String token);
-
 }

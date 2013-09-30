@@ -1,4 +1,4 @@
-package org.everit.verifiabledata.itests.core;
+package org.everit.verifiabledata.api.exception;
 
 /*
  * Copyright (c) 2011, Everit Kft.
@@ -21,47 +21,42 @@ package org.everit.verifiabledata.itests.core;
  * MA 02110-1301  USA
  */
 
-import org.everit.verifiabledata.api.VerifyService;
-import org.junit.Test;
-
 /**
- * Test interface for testing {@link VerifyService}.
+ * NoSuchVerifiableDataException is throw when the verifiable data is not exist in the database.
  */
-public interface VerifyTest {
+public class NoSuchVerifiableDataException extends Exception {
 
     /**
-     * Testing the create methods.
+     * The generated serial version UID.
      */
-    @Test
-    void testCreates();
+    private static final long serialVersionUID = 2453033101894377377L;
 
     /**
-     * Testing getVerificationEndDate method.
+     * The default constructor.
      */
-    @Test
-    void testGetVerificationEndDate();
+    public NoSuchVerifiableDataException() {
+        super("Not exitst the verifiable data.");
+    }
 
     /**
-     * Testing invalidateData method.
+     * The simple constructor.
+     * 
+     * @param msg
+     *            the error message.
      */
-    @Test
-    void testInvalidateData();
+    public NoSuchVerifiableDataException(final String msg) {
+        super(msg);
+    }
 
     /**
-     * Testing the reduceVerificationEndDate method.
+     * The simple constructor.
+     * 
+     * @param msg
+     *            the error message.
+     * @param e
+     *            the {@link Throwable} object.
      */
-    @Test
-    void testReduceVerificationEndDate();
-
-    /**
-     * Testing the rejected token.
-     */
-    @Test
-    void testRejectedRequest();
-
-    /**
-     * Testing verifyData method.
-     */
-    @Test
-    void testVerifyData();
+    public NoSuchVerifiableDataException(final String msg, final Throwable e) {
+        super(msg, e);
+    }
 }

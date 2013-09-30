@@ -52,6 +52,7 @@
                             *
                         </Import-Package>
                         <Export-Package>${project.artifactId}</Export-Package>
+                        <Meta-Persistence>META-INF/persistence.xml</Meta-Persistence>
                     </instructions>
                 </configuration>
             </plugin>
@@ -75,11 +76,11 @@
             <artifactId>org.everit.token.entity</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
-        
+
         <dependency>
-  <groupId>org.everit.resource</groupId>
-  <artifactId>org.everit.resource.entity</artifactId>
-  <version>0.5.0</version>
-</dependency>
+            <groupId>org.everit.resource</groupId>
+            <artifactId>org.everit.resource.entity</artifactId>
+            <version>0.5.0</version>
+        </dependency>
     </dependencies>
 </project>

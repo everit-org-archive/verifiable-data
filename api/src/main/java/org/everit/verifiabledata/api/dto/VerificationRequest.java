@@ -24,21 +24,21 @@ package org.everit.verifiabledata.api.dto;
 /**
  * Information of the verification request.
  */
-public class VerificationRequest {
+public final class VerificationRequest {
 
     /**
      * The id of the verification request.
      */
-    private long verificationRequestId;
+    private final long verificationRequestId;
     /**
      * The token UUID to the verify.
      */
-    private String verifyTokenUUID;
+    private final String verifyTokenUUID;
 
     /**
      * The token UUID to reject.
      */
-    private String rejectTokenUUID;
+    private final String rejectTokenUUID;
 
     /**
      * The simple constructor.
@@ -68,18 +68,6 @@ public class VerificationRequest {
 
     public String getVerifyTokenUUID() {
         return verifyTokenUUID;
-    }
-
-    public void setRejectTokenUUID(final String rejectTokenUUID) {
-        this.rejectTokenUUID = rejectTokenUUID;
-    }
-
-    public void setVerificationRequestId(final long verificationRequestId) {
-        this.verificationRequestId = verificationRequestId;
-    }
-
-    public void setVerifyTokenUUID(final String verifyTokenUUID) {
-        this.verifyTokenUUID = verifyTokenUUID;
     }
 
 }

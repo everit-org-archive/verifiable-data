@@ -74,7 +74,9 @@ public class VerifyServiceImpl implements VerifyService {
             throw new IllegalArgumentException("Must be positive the verificationLength.");
         }
 
-        String tokenUuid = tokenService.createToken(tokenValidityEndDate);
+        String verifyTokenUUID = tokenService.createToken(tokenValidityEndDate);
+
+        String rejectTokenUUID = tokenService.createToken(tokenValidityEndDate);
 
         Date validityEndDate = null;
         Date actualDate = new Date();
@@ -92,13 +94,14 @@ public class VerifyServiceImpl implements VerifyService {
         verificationRequestEntity.setVerificationLength(verificationLength);
         verificationRequestEntity.setVerificationLengthBase(verificationLengthBase);
         verificationRequestEntity.setVerifiableData(verifiableDataEntity);
-        verificationRequestEntity.setToken(em.getReference(TokenEntity.class, tokenUuid));
+        verificationRequestEntity.setVerifyTokenUUID(em.getReference(TokenEntity.class, verifyTokenUUID));
+        verificationRequestEntity.setRejectTokenUUID(em.getReference(TokenEntity.class, rejectTokenUUID));
 
         em.persist(verificationRequestEntity);
         em.flush();
 
         VerificationRequest verificationRequest = new VerificationRequest(
-                verificationRequestEntity.getVerificationRequestId(), tokenUuid, tokenUuid);
+                verificationRequestEntity.getVerificationRequestId(), verifyTokenUUID, rejectTokenUUID);
         VerifiableDataCreation verifiableDataCreation = new VerifiableDataCreation(
                 verifiableDataEntity.getVerifiableDataId(), verificationRequest);
         return verifiableDataCreation;
@@ -115,7 +118,7 @@ public class VerifyServiceImpl implements VerifyService {
             throw new IllegalArgumentException("Must be positive the verificationLength.");
         }
 
-        VerificationRequest verificationRequest = new VerificationRequest(0L, null, null);
+        VerificationRequest verificationRequest = null;
         VerifiableDataEntity verifiableDataEntity = findVerifiableDataEntityById(verifiableDataId);
         if (verifiableDataEntity != null) {
             em.lock(verifiableDataEntity, LockModeType.PESSIMISTIC_READ);
@@ -125,15 +128,18 @@ public class VerifyServiceImpl implements VerifyService {
 
             for (VerificationRequestEntity vre : verificationReguestEntities) {
                 revokeVerificationRequest(vre.getVerificationRequestId());
-                tokenService.revokeToken(vre.getToken().getTokenUuid());
+                tokenService.revokeToken(vre.getVerifyTokenUUID().getTokenUuid());
+                tokenService.revokeToken(vre.getRejectTokenUUID().getTokenUuid());
             }
 
-            String tokenUuid = tokenService.createToken(tokenValidityEndDate);
+            String verifyTokenUUID = tokenService.createToken(tokenValidityEndDate);
+            String rejectTokenUUID = tokenService.createToken(tokenValidityEndDate);
             VerificationRequestEntity verificationRequestEntity = new VerificationRequestEntity();
             verificationRequestEntity.setVerificationLength(verificationLength);
             verificationRequestEntity.setVerificationLengthBase(verificationLengthBase);
             verificationRequestEntity.setVerifiableData(verifiableDataEntity);
-            verificationRequestEntity.setToken(em.getReference(TokenEntity.class, tokenUuid));
+            verificationRequestEntity.setVerifyTokenUUID(em.getReference(TokenEntity.class, verifyTokenUUID));
+            verificationRequestEntity.setRejectTokenUUID(em.getReference(TokenEntity.class, rejectTokenUUID));
             em.persist(verificationRequestEntity);
 
             Date validityEndDate = null;
@@ -146,10 +152,8 @@ public class VerifyServiceImpl implements VerifyService {
             verifiableDataEntity.setVerifiedUntil(validityEndDate);
             em.merge(verifiableDataEntity);
             em.flush();
-
-            verificationRequest.setVerificationRequestId(verificationRequestEntity.getVerificationRequestId());
-            verificationRequest.setRejectTokenUUID(tokenUuid);
-            verificationRequest.setVerifyTokenUUID(tokenUuid);
+            verificationRequest = new VerificationRequest(verificationRequestEntity.getVerificationRequestId(),
+                    verifyTokenUUID, rejectTokenUUID);
 
         } else {
             throw new IllegalArgumentException("The verifiable data is not exist.");
@@ -162,9 +166,11 @@ public class VerifyServiceImpl implements VerifyService {
      * 
      * @param token
      *            the {@link Token} object. Cannot be <code>null</code>.
+     * @param verifyToken
+     *            usign the verifyToken or not.
      * @return the correct {@link TokenUsageResult} value.
      */
-    private TokenUsageResult determineTokenUsageResult(final Token token) {
+    private TokenUsageResult determineTokenUsageResult(final Token token, final boolean verifyToken) {
         if ((token == null)) {
             throw new IllegalArgumentException("The one paramter is null. Cannot be null the paramters.");
         }
@@ -176,9 +182,15 @@ public class VerifyServiceImpl implements VerifyService {
         if (actualDate.getTime() > expirationDate.getTime()) {
             result = TokenUsageResult.EXPIRED;
         } else if (dateOfUse != null) {
-            result = TokenUsageResult.VERIFIED;
-        } else if (revocationDate != null) {
-            result = TokenUsageResult.REJECTED;
+            if (verifyToken) {
+                result = TokenUsageResult.VERIFIED;
+            } else {
+                result = TokenUsageResult.REJECTED;
+            }
+        } else {
+            if (revocationDate != null) {
+                result = TokenUsageResult.REJECTED;
+            }
         }
         return result;
     }
@@ -225,18 +237,36 @@ public class VerifyServiceImpl implements VerifyService {
     }
 
     /**
-     * Finds verifiable request entities based on token UUID.
+     * Finds verifiable request entities based on reject token UUID.
      * 
      * @param tokenUuid
-     *            the tokenUuid.
+     *            the reject tokenUuid.
      * @return the verification request entities if no one return empty list.
      */
-    private List<VerificationRequestEntity> findVerificationRequestEntityByTokenUuid(final String tokenUuid) {
+    private List<VerificationRequestEntity> findVerificationRequestEntityByRejectTokenUuid(final String tokenUuid) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<VerificationRequestEntity> criteriaQuery = cb.createQuery(VerificationRequestEntity.class);
         Root<VerificationRequestEntity> root = criteriaQuery
                 .from(VerificationRequestEntity.class);
-        Predicate predicate = cb.equal(root.get(VerificationRequestEntity_.token),
+        Predicate predicate = cb.equal(root.get(VerificationRequestEntity_.rejectTokenUUID),
+                em.getReference(TokenEntity.class, tokenUuid));
+        criteriaQuery.where(predicate);
+        return em.createQuery(criteriaQuery).getResultList();
+    }
+
+    /**
+     * Finds verifiable request entities based on verify token UUID.
+     * 
+     * @param tokenUuid
+     *            the verify tokenUuid.
+     * @return the verification request entities if no one return empty list.
+     */
+    private List<VerificationRequestEntity> findVerificationRequestEntityByVerifyTokenUuid(final String tokenUuid) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<VerificationRequestEntity> criteriaQuery = cb.createQuery(VerificationRequestEntity.class);
+        Root<VerificationRequestEntity> root = criteriaQuery
+                .from(VerificationRequestEntity.class);
+        Predicate predicate = cb.equal(root.get(VerificationRequestEntity_.verifyTokenUUID),
                 em.getReference(TokenEntity.class, tokenUuid));
         criteriaQuery.where(predicate);
         return em.createQuery(criteriaQuery).getResultList();
@@ -258,6 +288,18 @@ public class VerifyServiceImpl implements VerifyService {
     }
 
     @Override
+    public void invalidateData(final long verifiableDataId) {
+        List<VerificationRequestEntity> verificationRequests = findVerificationRequestEntitiesByVerifiableDataId(verifiableDataId);
+        if (verificationRequests.isEmpty()) {
+            throw new IllegalArgumentException("Not exist verifiable request in the verifiable data id.");
+        } else {
+            if (reduceVerificationEndDate(verifiableDataId, null)) {
+                revokeVerificationRequest(verificationRequests.get(0).getVerificationRequestId());
+            }
+        }
+    }
+
+    @Override
     public boolean reduceVerificationEndDate(final long verifiableDataId, final Date verificationEndDate) {
         Date actualDate = new Date();
         Date usageVerificationEndDate = verificationEndDate;
@@ -276,7 +318,8 @@ public class VerifyServiceImpl implements VerifyService {
                 List<VerificationRequestEntity> verificationRequestEntities = findVerificationRequestEntitiesByVerifiableDataId(verifiableDataId);
                 for (VerificationRequestEntity vre : verificationRequestEntities) {
                     long verificationLength = (int) ((usageVerificationEndDate.getTime()
-                            - tokenService.getToken(vre.getToken().getTokenUuid()).getCreationDate().getTime()) / MULTIPER);
+                            - tokenService.getToken(vre.getVerifyTokenUUID().getTokenUuid()).getCreationDate()
+                            .getTime()) / MULTIPER);
                     vre.setVerificationLength(verificationLength);
                     em.merge(vre);
                 }
@@ -290,8 +333,17 @@ public class VerifyServiceImpl implements VerifyService {
         return reduce;
     }
 
-    @Override
-    public void revokeVerificationRequest(final long verificationRequestId) {
+    /**
+     * Revoke the verification request.
+     * 
+     * @param verificationRequestId
+     *            the id of the verification request. Must be exist verifiable request.
+     * 
+     * @throws IllegalArgumentException
+     *             if the parameter is <code>null</code> or the verifiable data is not exits or the verifiable request
+     *             is not exist.
+     */
+    private void revokeVerificationRequest(final long verificationRequestId) {
         VerificationRequestEntity verificationRequestEntity = findVerificationRequestEnityById(verificationRequestId);
         if (verificationRequestEntity == null) {
             throw new IllegalArgumentException("The verifiable request is not exist.");
@@ -314,12 +366,14 @@ public class VerifyServiceImpl implements VerifyService {
             throw new IllegalArgumentException("The token paramter is null. Cannot be null the paramters.");
         }
         VerificationResult result = null;
-        List<VerificationRequestEntity> verificationRequestEntities = findVerificationRequestEntityByTokenUuid(token);
-        if (verificationRequestEntities.size() == 1) {
-            VerificationRequestEntity verificationRequestEntity = verificationRequestEntities.get(0);
+        List<VerificationRequestEntity> verifyVerificationRequestEntities = findVerificationRequestEntityByVerifyTokenUuid(token);
+        List<VerificationRequestEntity> rejectVerificationRequestEntities = findVerificationRequestEntityByRejectTokenUuid(token);
+        if (verifyVerificationRequestEntities.size() == 1) {
+            VerificationRequestEntity verificationRequestEntity = verifyVerificationRequestEntities.get(0);
             boolean verifyToken = tokenService.verifyToken(token);
             Token getToken = tokenService.getToken(token);
             if (verifyToken) {
+                tokenService.revokeToken(verificationRequestEntity.getRejectTokenUUID().getTokenUuid());
                 VerificationLengthBase verificationLengthBase = verificationRequestEntity.getVerificationLengthBase();
                 VerifiableDataEntity verifiableData = verificationRequestEntity.getVerifiableData();
                 if (verificationLengthBase.equals(VerificationLengthBase.VERIFICATION)) {
@@ -330,13 +384,21 @@ public class VerifyServiceImpl implements VerifyService {
                     em.merge(verifiableData);
                     em.flush();
                 }
-                result = new VerificationResult(verifiableData.getVerifiableDataId(),
-                        determineTokenUsageResult(getToken));
-
-            } else {
-                result = new VerificationResult(verificationRequestEntity.getVerifiableData().getVerifiableDataId(),
-                        determineTokenUsageResult(getToken));
+                // result = new VerificationResult(verifiableData.getVerifiableDataId(),
+                // determineTokenUsageResult(getToken, true));
             }
+            result = new VerificationResult(verificationRequestEntity.getVerifiableData().getVerifiableDataId(),
+                    determineTokenUsageResult(getToken, true));
+        } else if (rejectVerificationRequestEntities.size() == 1) {
+            VerificationRequestEntity verificationRequestEntity = rejectVerificationRequestEntities.get(0);
+            boolean verifyToken = tokenService.verifyToken(token);
+            Token getToken = tokenService.getToken(token);
+            if (verifyToken) {
+                tokenService.revokeToken(verificationRequestEntity.getVerifyTokenUUID().getTokenUuid());
+                reduceVerificationEndDate(verificationRequestEntity.getVerifiableData().getVerifiableDataId(), null);
+            }
+            result = new VerificationResult(verificationRequestEntity.getVerifiableData().getVerifiableDataId(),
+                    determineTokenUsageResult(getToken, false));
         }
         return result;
     }
