@@ -56,6 +56,9 @@ public class VerifiableDataEntity {
     @Temporal(TemporalType.TIMESTAMP)
     private Date verifiedUntil;
 
+    /**
+     * The verification requests list.
+     */
     @OneToMany(mappedBy = "verifiableData", fetch = FetchType.LAZY, targetEntity = VerificationRequestEntity.class)
     private List<VerificationRequestEntity> verificationRequestes;
 
@@ -83,12 +86,20 @@ public class VerifiableDataEntity {
         return verifiableDataId;
     }
 
+    public List<VerificationRequestEntity> getVerificationRequestes() {
+        return verificationRequestes;
+    }
+
     public Date getVerifiedUntil() {
         return verifiedUntil;
     }
 
     public void setVerifiableDataId(final long verifiableDataId) {
         this.verifiableDataId = verifiableDataId;
+    }
+
+    public void setVerificationRequestes(final List<VerificationRequestEntity> verificationRequestes) {
+        this.verificationRequestes = verificationRequestes;
     }
 
     public void setVerifiedUntil(final Date verifiedUntil) {

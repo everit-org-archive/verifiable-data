@@ -79,6 +79,11 @@ public class VerifyTestImpl implements VerifyTest {
     private static final int CONSTANT = 200;
 
     /**
+     * The time multiplier.
+     */
+    private static final int TIME_MULTIPLIER = 4;
+
+    /**
      * Creating verifiable datas.
      * 
      * @return the {@link VerifiableDataCreation} list.
@@ -96,6 +101,41 @@ public class VerifyTestImpl implements VerifyTest {
             verifiableDataCreations.add(createVerifiableData);
         }
         return verifiableDataCreations;
+    }
+
+    private List<VerifiableDataCreation> createVerifiableDataCreationsExpired() {
+        List<VerifiableDataCreation> verifiableDataCreationsExpired = new ArrayList<VerifiableDataCreation>();
+        // Create expired verifiable datas.
+        for (int i = 0; i < CONSTANT; i++) {
+            Date actualDate = new Date();
+            long time = actualDate.getTime() + (TIME_MULTIPLIER * CONSTANT);
+            Date tokenValidityEndDate = new Date(time);
+            long verificationLength = CONSTANT / CONSTANT;
+            VerifiableDataCreation createVerifiableData = verifyService.createVerifiableData(tokenValidityEndDate,
+                    verificationLength,
+                    getRandomVerificationLengthBase());
+            Assert.assertNotNull(createVerifiableData);
+            verifiableDataCreationsExpired.add(createVerifiableData);
+        }
+
+        List<VerifiableDataCreation> verifiableDataCreations = createVerifiableDataCreation();
+        // Create expired verifiable datas with new verification requests.
+        for (VerifiableDataCreation vdc : verifiableDataCreations) {
+            Date actualDate = new Date();
+            long time = actualDate.getTime() + (TIME_MULTIPLIER * CONSTANT);
+            Date tokenValidityEndDate = new Date(time);
+            long verificationLength = CONSTANT / CONSTANT;
+            VerificationRequest createVerificationRequest = verifyService.createVerificationRequest(
+                    vdc.getVerifiableDataId(),
+                    tokenValidityEndDate,
+                    verificationLength,
+                    getRandomVerificationLengthBase());
+            Assert.assertNotNull(createVerificationRequest);
+            VerifiableDataCreation verifiableDataCreation = new VerifiableDataCreation(vdc.getVerifiableDataId(),
+                    createVerificationRequest);
+            verifiableDataCreationsExpired.add(verifiableDataCreation);
+        }
+        return verifiableDataCreationsExpired;
     }
 
     /**
@@ -282,40 +322,9 @@ public class VerifyTestImpl implements VerifyTest {
 
     @Override
     public void testGetVerificationEndDate() {
-        List<VerifiableDataCreation> verifiableDataCreationsExpired = new ArrayList<VerifiableDataCreation>();
-        // Create expired verifiable datas.
-        for (int i = 0; i < CONSTANT; i++) {
-            Date actualDate = new Date();
-            long time = actualDate.getTime() + (4 * CONSTANT);
-            Date tokenValidityEndDate = new Date(time);
-            long verificationLength = CONSTANT / CONSTANT;
-            VerifiableDataCreation createVerifiableData = verifyService.createVerifiableData(tokenValidityEndDate,
-                    verificationLength,
-                    getRandomVerificationLengthBase());
-            Assert.assertNotNull(createVerifiableData);
-            verifiableDataCreationsExpired.add(createVerifiableData);
-        }
-
-        List<VerifiableDataCreation> verifiableDataCreations = createVerifiableDataCreation();
-        // Create expired verifiable datas with new verification requests.
-        for (VerifiableDataCreation vdc : verifiableDataCreations) {
-            Date actualDate = new Date();
-            long time = actualDate.getTime() + (4 * CONSTANT);
-            Date tokenValidityEndDate = new Date(time);
-            long verificationLength = CONSTANT / CONSTANT;
-            VerificationRequest createVerificationRequest = verifyService.createVerificationRequest(
-                    vdc.getVerifiableDataId(),
-                    tokenValidityEndDate,
-                    verificationLength,
-                    getRandomVerificationLengthBase());
-            Assert.assertNotNull(createVerificationRequest);
-            VerifiableDataCreation verifiableDataCreation = new VerifiableDataCreation(vdc.getVerifiableDataId(),
-                    createVerificationRequest);
-            verifiableDataCreationsExpired.add(verifiableDataCreation);
-        }
-
+        List<VerifiableDataCreation> verifiableDataCreationsExpired = createVerifiableDataCreationsExpired();
         // Creating not expired verifiable datas.
-        verifiableDataCreations = createVerifiableDataCreation();
+        List<VerifiableDataCreation> verifiableDataCreations = createVerifiableDataCreation();
         verifiableDataCreations.addAll(createVerifiableDataCreation());
         verifiableDataCreations.addAll(createVerifiableDataCreation());
         verifiableDataCreations.addAll(createVerifiableDataCreation());
@@ -352,18 +361,7 @@ public class VerifyTestImpl implements VerifyTest {
     @Override
     public void testInvalidateData() {
         // Creating verifiable datas and new verification requests.
-        List<VerifiableDataCreation> verifiableDataCreationsExpired = new ArrayList<VerifiableDataCreation>();
-        for (int i = 0; i < CONSTANT; i++) {
-            Date actualDate = new Date();
-            long time = actualDate.getTime() + (4 * CONSTANT);
-            Date tokenValidityEndDate = new Date(time);
-            long verificationLength = CONSTANT / CONSTANT;
-            VerifiableDataCreation createVerifiableData = verifyService.createVerifiableData(tokenValidityEndDate,
-                    verificationLength,
-                    getRandomVerificationLengthBase());
-            Assert.assertNotNull(createVerifiableData);
-            verifiableDataCreationsExpired.add(createVerifiableData);
-        }
+        List<VerifiableDataCreation> verifiableDataCreationsExpired = createVerifiableDataCreationsExpired();
 
         List<VerifiableDataCreation> createVerifiableDataCreation = createVerifiableDataCreation();
         createVerifiableDataCreation.addAll(createVerifiableDataCreation());
@@ -389,40 +387,10 @@ public class VerifyTestImpl implements VerifyTest {
 
     @Override
     public void testReduceVerificationEndDate() {
-        List<VerifiableDataCreation> verifiableDataCreationsExpired = new ArrayList<VerifiableDataCreation>();
-        // Create expired verifiable datas.
-        for (int i = 0; i < CONSTANT; i++) {
-            Date actualDate = new Date();
-            long time = actualDate.getTime() + (4 * CONSTANT);
-            Date tokenValidityEndDate = new Date(time);
-            long verificationLength = CONSTANT / CONSTANT;
-            VerifiableDataCreation createVerifiableData = verifyService.createVerifiableData(tokenValidityEndDate,
-                    verificationLength,
-                    getRandomVerificationLengthBase());
-            Assert.assertNotNull(createVerifiableData);
-            verifiableDataCreationsExpired.add(createVerifiableData);
-        }
-
-        List<VerifiableDataCreation> verifiableDataCreations = createVerifiableDataCreation();
-        // Create new verification request.
-        for (VerifiableDataCreation vdc : verifiableDataCreations) {
-            Date actualDate = new Date();
-            long time = actualDate.getTime() + (4 * CONSTANT);
-            Date tokenValidityEndDate = new Date(time);
-            long verificationLength = CONSTANT / CONSTANT;
-            VerificationRequest createVerificationRequest = verifyService.createVerificationRequest(
-                    vdc.getVerifiableDataId(),
-                    tokenValidityEndDate,
-                    verificationLength,
-                    getRandomVerificationLengthBase());
-            Assert.assertNotNull(createVerificationRequest);
-            VerifiableDataCreation verifiableDataCreation = new VerifiableDataCreation(vdc.getVerifiableDataId(),
-                    createVerificationRequest);
-            verifiableDataCreationsExpired.add(verifiableDataCreation);
-        }
+        List<VerifiableDataCreation> verifiableDataCreationsExpired = createVerifiableDataCreationsExpired();
 
         // Create verifable datas.
-        verifiableDataCreations = createVerifiableDataCreation();
+        List<VerifiableDataCreation> verifiableDataCreations = createVerifiableDataCreation();
         verifiableDataCreations.addAll(createVerifiableDataCreation());
         verifiableDataCreations.addAll(createVerifiableDataCreation());
         verifiableDataCreations.addAll(createVerifiableDataCreation());
@@ -478,37 +446,9 @@ public class VerifyTestImpl implements VerifyTest {
 
     @Override
     public void testRejectedRequest() {
-        List<VerifiableDataCreation> verifiableDataCreationsExpired = new ArrayList<VerifiableDataCreation>();
-        for (int i = 0; i < CONSTANT; i++) {
-            Date actualDate = new Date();
-            long time = actualDate.getTime() + (4 * CONSTANT);
-            Date tokenValidityEndDate = new Date(time);
-            long verificationLength = CONSTANT / CONSTANT;
-            VerifiableDataCreation createVerifiableData = verifyService.createVerifiableData(tokenValidityEndDate,
-                    verificationLength,
-                    getRandomVerificationLengthBase());
-            Assert.assertNotNull(createVerifiableData);
-            verifiableDataCreationsExpired.add(createVerifiableData);
-        }
+        List<VerifiableDataCreation> verifiableDataCreationsExpired = createVerifiableDataCreationsExpired();
 
         List<VerifiableDataCreation> createVerifiableDataCreation = createVerifiableDataCreation();
-        for (VerifiableDataCreation vdc : createVerifiableDataCreation) {
-            Date actualDate = new Date();
-            long time = actualDate.getTime() + (4 * CONSTANT);
-            Date tokenValidityEndDate = new Date(time);
-            long verificationLength = CONSTANT / CONSTANT;
-            VerificationRequest createVerificationRequest = verifyService.createVerificationRequest(
-                    vdc.getVerifiableDataId(),
-                    tokenValidityEndDate,
-                    verificationLength,
-                    getRandomVerificationLengthBase());
-            Assert.assertNotNull(createVerificationRequest);
-            VerifiableDataCreation verifiableDataCreation = new VerifiableDataCreation(vdc.getVerifiableDataId(),
-                    createVerificationRequest);
-            verifiableDataCreationsExpired.add(verifiableDataCreation);
-        }
-
-        createVerifiableDataCreation = createVerifiableDataCreation();
         createVerifiableDataCreation.addAll(createVerifiableDataCreation());
         createVerifiableDataCreation.addAll(createVerifiableDataCreation());
         createVerifiableDataCreation.addAll(createVerifiableDataCreation());
@@ -549,35 +489,7 @@ public class VerifyTestImpl implements VerifyTest {
     @Override
     public void testVerifyData() {
         // Creating verifiable datas and new verification requests.
-        List<VerifiableDataCreation> verifiableDataCreationsExpired = new ArrayList<VerifiableDataCreation>();
-        for (int i = 0; i < CONSTANT; i++) {
-            Date actualDate = new Date();
-            long time = actualDate.getTime() + (4 * CONSTANT);
-            Date tokenValidityEndDate = new Date(time);
-            long verificationLength = CONSTANT / CONSTANT;
-            VerifiableDataCreation createVerifiableData = verifyService.createVerifiableData(tokenValidityEndDate,
-                    verificationLength,
-                    getRandomVerificationLengthBase());
-            Assert.assertNotNull(createVerifiableData);
-            verifiableDataCreationsExpired.add(createVerifiableData);
-        }
-
-        List<VerifiableDataCreation> createVerifiableDataCreation = createVerifiableDataCreation();
-        for (VerifiableDataCreation vdc : createVerifiableDataCreation) {
-            Date actualDate = new Date();
-            long time = actualDate.getTime() + (4 * CONSTANT);
-            Date tokenValidityEndDate = new Date(time);
-            long verificationLength = CONSTANT / CONSTANT;
-            VerificationRequest createVerificationRequest = verifyService.createVerificationRequest(
-                    vdc.getVerifiableDataId(),
-                    tokenValidityEndDate,
-                    verificationLength,
-                    getRandomVerificationLengthBase());
-            Assert.assertNotNull(createVerificationRequest);
-            VerifiableDataCreation verifiableDataCreation = new VerifiableDataCreation(vdc.getVerifiableDataId(),
-                    createVerificationRequest);
-            verifiableDataCreationsExpired.add(verifiableDataCreation);
-        }
+        List<VerifiableDataCreation> verifiableDataCreationsExpired = createVerifiableDataCreationsExpired();
 
         List<VerifiableDataCreation> verifiableDataCreations = createVerifiableDataCreation();
         verifiableDataCreations.addAll(createVerifiableDataCreation());
@@ -616,7 +528,6 @@ public class VerifyTestImpl implements VerifyTest {
             try {
                 verifyService.verifyData(testWrongToken);
             } catch (NoSuchTokenException e) {
-                System.out.println("asdf");
                 Assert.assertNotNull(e);
             }
         }

@@ -21,7 +21,6 @@ package org.everit.verifiabledata.itests.core;
  * MA 02110-1301  USA
  */
 
-import org.everit.verifiabledata.api.VerifyService;
 import org.junit.Test;
 
 /**
