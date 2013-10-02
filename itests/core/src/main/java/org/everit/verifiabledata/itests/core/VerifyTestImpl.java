@@ -62,12 +62,10 @@ import org.everit.verifiabledata.api.enums.VerificationLengthBase;
  * Implementation of {@link VerifyTest}.
  */
 public class VerifyTestImpl implements VerifyTest {
-
     /**
      * The {@link VerifyService} instance.
      */
     private VerifyService verifyService;
-
     /**
      * 10 hour in seconds.
      */
@@ -131,6 +129,7 @@ public class VerifyTestImpl implements VerifyTest {
                     verificationLength,
                     getRandomVerificationLengthBase());
             Assert.assertNotNull(createVerificationRequest);
+            Assert.assertTrue(createVerificationRequest.getVerificationRequestId() > 0L);
             VerifiableDataCreation verifiableDataCreation = new VerifiableDataCreation(vdc.getVerifiableDataId(),
                     createVerificationRequest);
             verifiableDataCreationsExpired.add(verifiableDataCreation);
@@ -172,6 +171,80 @@ public class VerifyTestImpl implements VerifyTest {
 
     public void setVerifyService(final VerifyService verifyService) {
         this.verifyService = verifyService;
+    }
+
+    @Override
+    public void testComplex() {
+        List<VerifiableDataCreation> createVerifiableDataCreationsExpired = createVerifiableDataCreationsExpired();
+        List<VerifiableDataCreation> createVerifiableDataCreation = createVerifiableDataCreation();
+        createVerifiableDataCreation.addAll(createVerifiableDataCreation());
+        createVerifiableDataCreation.addAll(createVerifiableDataCreation());
+        createVerifiableDataCreation.addAll(createVerifiableDataCreation());
+        createVerifiableDataCreation.addAll(createVerifiableDataCreation());
+
+        for (VerifiableDataCreation vdc : createVerifiableDataCreation) {
+            Date verificationEndDate = verifyService.getVerificationEndDate(vdc.getVerifiableDataId());
+            Assert.assertNull(verificationEndDate);
+
+            Date actualData = new Date();
+            Calendar c = Calendar.getInstance();
+            c.setTime(actualData);
+            c.add(Calendar.DATE, 1);
+            Date endDate = c.getTime();
+            boolean reduceVerificationEndDate = verifyService.reduceVerificationEndDate(vdc.getVerifiableDataId(),
+                    endDate);
+            Assert.assertFalse(reduceVerificationEndDate);
+
+            verificationEndDate = verifyService.getVerificationEndDate(vdc.getVerifiableDataId());
+            Assert.assertNull(verificationEndDate);
+
+            VerificationResult verifyData = verifyService.verifyData(vdc.getVerificationRequest().getVerifyTokenUUID());
+            Assert.assertNotNull(verifyData);
+            Assert.assertEquals(TokenUsageResult.VERIFIED, verifyData.getTokenUsageResult());
+
+            verificationEndDate = verifyService.getVerificationEndDate(vdc.getVerifiableDataId());
+            Assert.assertNotNull(verificationEndDate);
+
+            reduceVerificationEndDate = verifyService.reduceVerificationEndDate(vdc.getVerifiableDataId(),
+                    endDate);
+            Assert.assertTrue(reduceVerificationEndDate);
+
+            verificationEndDate = verifyService.getVerificationEndDate(vdc.getVerifiableDataId());
+            Assert.assertNotNull(verificationEndDate);
+
+            reduceVerificationEndDate = verifyService.reduceVerificationEndDate(vdc.getVerifiableDataId(),
+                    endDate);
+            Assert.assertFalse(reduceVerificationEndDate);
+
+            verificationEndDate = verifyService.getVerificationEndDate(vdc.getVerifiableDataId());
+            Assert.assertNotNull(verificationEndDate);
+        }
+
+        for (VerifiableDataCreation vdc : createVerifiableDataCreationsExpired) {
+            Date verificationEndDate = verifyService.getVerificationEndDate(vdc.getVerifiableDataId());
+            Assert.assertNull(verificationEndDate);
+
+            Date actualData = new Date();
+            Calendar c = Calendar.getInstance();
+            c.setTime(actualData);
+            c.add(Calendar.DATE, 1);
+            Date endDate = c.getTime();
+            boolean reduceVerificationEndDate = verifyService.reduceVerificationEndDate(vdc.getVerifiableDataId(),
+                    endDate);
+            Assert.assertFalse(reduceVerificationEndDate);
+
+            VerificationResult verifyData = verifyService.verifyData(vdc.getVerificationRequest().getVerifyTokenUUID());
+            Assert.assertNotNull(verifyData);
+            Assert.assertEquals(TokenUsageResult.EXPIRED, verifyData.getTokenUsageResult());
+            Assert.assertEquals(new Long(vdc.getVerifiableDataId()), verifyData.getVerifiableDataId());
+
+            verificationEndDate = verifyService.getVerificationEndDate(vdc.getVerifiableDataId());
+            Assert.assertNull(verificationEndDate);
+
+            reduceVerificationEndDate = verifyService.reduceVerificationEndDate(vdc.getVerifiableDataId(),
+                    endDate);
+            Assert.assertFalse(reduceVerificationEndDate);
+        }
     }
 
     @Override
@@ -332,9 +405,10 @@ public class VerifyTestImpl implements VerifyTest {
         for (VerifiableDataCreation vdc : verifiableDataCreations) {
             // Testing the getVerification end date in the not expired verifiable data.
             Date verificationEndDate = verifyService.getVerificationEndDate(vdc.getVerifiableDataId());
-            Date actualDate = new Date();
-            Assert.assertNotNull(verificationEndDate);
-            Assert.assertTrue(actualDate.getTime() < verificationEndDate.getTime());
+            // Date actualDate = new Date();
+            Assert.assertNull(verificationEndDate);
+            // Assert.assertNotNull(verificationEndDate);
+            // Assert.assertTrue(actualDate.getTime() < verificationEndDate.getTime());
 
             // Testing the invalid verifiable data id.
             try {
@@ -403,7 +477,8 @@ public class VerifyTestImpl implements VerifyTest {
             c.add(Calendar.SECOND, CONSTANT);
             boolean reduceVerificationEndDate = verifyService.reduceVerificationEndDate(vdc.getVerifiableDataId(),
                     c.getTime());
-            Assert.assertTrue(reduceVerificationEndDate);
+            Assert.assertFalse(reduceVerificationEndDate);
+            // Assert.assertTrue(reduceVerificationEndDate);
 
             // Testing invalid verifiable data id.
             try {

@@ -29,6 +29,12 @@ import org.junit.Test;
 public interface VerifyTest {
 
     /**
+     * Testing the complex test in the methods.
+     */
+    @Test
+    void testComplex();
+
+    /**
      * Testing the create methods.
      */
     @Test

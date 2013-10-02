@@ -134,7 +134,7 @@ public interface VerifyService {
      * 
      * @param token
      *            the token. Cannot be <code>null</code>.
-     * @return the {@link VerificationRequest} object.
+     * @return the {@link VerificationRequest} object. Return <code>null</code>, if the token is invalid.
      * @throws IllegalArgumentException
      *             if parameter is <code>null</code>.
      */
