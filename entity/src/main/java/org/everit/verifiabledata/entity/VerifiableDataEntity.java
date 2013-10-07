@@ -22,14 +22,10 @@ package org.everit.verifiabledata.entity;
  */
 
 import java.util.Date;
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -56,11 +52,11 @@ public class VerifiableDataEntity {
     @Temporal(TemporalType.TIMESTAMP)
     private Date verifiedUntil;
 
-    /**
-     * The verification requests list.
-     */
-    @OneToMany(mappedBy = "verifiableData", fetch = FetchType.LAZY, targetEntity = VerificationRequestEntity.class)
-    private List<VerificationRequestEntity> verificationRequestes;
+    // /**
+    // * The verification requests list.
+    // */
+    // @OneToMany(mappedBy = "verifiableData", fetch = FetchType.LAZY, targetEntity = VerificationRequestEntity.class)
+    // private List<VerificationRequestEntity> verificationRequestes;
 
     /**
      * The default constructor.
@@ -86,9 +82,9 @@ public class VerifiableDataEntity {
         return verifiableDataId;
     }
 
-    public List<VerificationRequestEntity> getVerificationRequestes() {
-        return verificationRequestes;
-    }
+    // public List<VerificationRequestEntity> getVerificationRequestes() {
+    // return verificationRequestes;
+    // }
 
     public Date getVerifiedUntil() {
         return verifiedUntil;
@@ -98,9 +94,9 @@ public class VerifiableDataEntity {
         this.verifiableDataId = verifiableDataId;
     }
 
-    public void setVerificationRequestes(final List<VerificationRequestEntity> verificationRequestes) {
-        this.verificationRequestes = verificationRequestes;
-    }
+    // public void setVerificationRequestes(final List<VerificationRequestEntity> verificationRequestes) {
+    // this.verificationRequestes = verificationRequestes;
+    // }
 
     public void setVerifiedUntil(final Date verifiedUntil) {
         this.verifiedUntil = verifiedUntil;
