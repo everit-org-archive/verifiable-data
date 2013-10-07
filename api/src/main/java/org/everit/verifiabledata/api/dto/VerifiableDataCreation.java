@@ -24,17 +24,17 @@ package org.everit.verifiabledata.api.dto;
 /**
  * Information of the verifiable data.
  */
-public final class VerifiableDataCreation {
+public class VerifiableDataCreation {
 
     /**
      * The id of the verifiable data.
      */
-    private final long verifiableDataId;
+    private long verifiableDataId;
 
     /**
      * The verification request.
      */
-    private final VerificationRequest verificationRequest;
+    private VerificationRequest verificationRequest;
 
     /**
      * The simple constructor.
@@ -56,6 +56,14 @@ public final class VerifiableDataCreation {
 
     public VerificationRequest getVerificationRequest() {
         return verificationRequest;
+    }
+
+    public void setVerifiableDataId(final long verifiableDataId) {
+        this.verifiableDataId = verifiableDataId;
+    }
+
+    public void setVerificationRequest(final VerificationRequest verificationRequest) {
+        this.verificationRequest = verificationRequest;
     }
 
 }

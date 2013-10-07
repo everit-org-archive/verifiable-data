@@ -1,4 +1,4 @@
-package org.everit.verifiabledata.api.exception;
+package org.everit.verifiabledata.api.exceptions;
 
 /*
  * Copyright (c) 2011, Everit Kft.
@@ -22,9 +22,9 @@ package org.everit.verifiabledata.api.exception;
  */
 
 /**
- * NoSuchVerifiableDataException is throw when the verifiable data is not exist in the database.
+ * InvalidVericationEndDateException is throw when the verification end date is before than actual date.
  */
-public class NoSuchVerifiableDataException extends Exception {
+public class InvalidVericationEndDateException extends RuntimeException {
 
     /**
      * The generated serial version UID.
@@ -33,30 +33,12 @@ public class NoSuchVerifiableDataException extends Exception {
 
     /**
      * The default constructor.
-     */
-    public NoSuchVerifiableDataException() {
-        super("Not exitst the verifiable data.");
-    }
-
-    /**
-     * The simple constructor.
      * 
      * @param msg
      *            the error message.
      */
-    public NoSuchVerifiableDataException(final String msg) {
+    public InvalidVericationEndDateException(final String msg) {
         super(msg);
     }
 
-    /**
-     * The simple constructor.
-     * 
-     * @param msg
-     *            the error message.
-     * @param e
-     *            the {@link Throwable} object.
-     */
-    public NoSuchVerifiableDataException(final String msg, final Throwable e) {
-        super(msg, e);
-    }
 }

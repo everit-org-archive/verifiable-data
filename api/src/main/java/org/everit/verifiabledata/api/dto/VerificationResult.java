@@ -26,17 +26,17 @@ import org.everit.verifiabledata.api.enums.TokenUsageResult;
 /**
  * Information of the verification result.
  */
-public final class VerificationResult {
+public class VerificationResult {
 
     /**
      * The id of the verifiable data.
      */
-    private final Long verifiableDataId;
+    private Long verifiableDataId;
 
     /**
      * The token usage result.
      */
-    private final TokenUsageResult tokenUsageResult;
+    private TokenUsageResult tokenUsageResult;
 
     /**
      * The simple constructor.
@@ -58,6 +58,14 @@ public final class VerificationResult {
 
     public Long getVerifiableDataId() {
         return verifiableDataId;
+    }
+
+    public void setTokenUsageResult(final TokenUsageResult tokenUsageResult) {
+        this.tokenUsageResult = tokenUsageResult;
+    }
+
+    public void setVerifiableDataId(final Long verifiableDataId) {
+        this.verifiableDataId = verifiableDataId;
     }
 
 }
