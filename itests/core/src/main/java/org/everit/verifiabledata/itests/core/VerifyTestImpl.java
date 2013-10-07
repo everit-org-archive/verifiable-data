@@ -36,38 +36,19 @@ import org.everit.verifiabledata.api.dto.VerificationRequest;
 import org.everit.verifiabledata.api.dto.VerificationResult;
 import org.everit.verifiabledata.api.enums.TokenUsageResult;
 import org.everit.verifiabledata.api.enums.VerificationLengthBase;
-
-/*
- * Copyright (c) 2011, Everit Kft.
- *
- * All rights reserved.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA 02110-1301  USA
- */
+import org.everit.verifiabledata.api.exceptions.InvalidVericationEndDateException;
+import org.everit.verifiabledata.api.exceptions.NoSuchVerifiableDataException;
+import org.everit.verifiabledata.api.exceptions.NoSuchVerificationRequestException;
+import org.everit.verifiabledata.api.exceptions.NonPositiveVerificationLength;
 
 /**
  * Implementation of {@link VerifyTest}.
  */
 public class VerifyTestImpl implements VerifyTest {
-
     /**
      * The {@link VerifyService} instance.
      */
     private VerifyService verifyService;
-
     /**
      * 10 hour in seconds.
      */
@@ -99,6 +80,52 @@ public class VerifyTestImpl implements VerifyTest {
                     getRandomVerificationLengthBase());
             Assert.assertNotNull(createVerifiableData);
             verifiableDataCreations.add(createVerifiableData);
+            // Testing the null validity end date.
+            try {
+                verifyService.createVerifiableData(null,
+                        verificationLength,
+                        getRandomVerificationLengthBase());
+            } catch (IllegalArgumentException e) {
+                Assert.assertNotNull(e);
+            }
+
+            // Testing the null verification length base.
+            try {
+                verifyService.createVerifiableData(tokenValidityEndDate,
+                        verificationLength,
+                        null);
+            } catch (IllegalArgumentException e) {
+                Assert.assertNotNull(e);
+            }
+
+            // Testing the negative verification length.
+            try {
+                verifyService.createVerifiableData(tokenValidityEndDate,
+                        -1L,
+                        getRandomVerificationLengthBase());
+            } catch (NonPositiveVerificationLength e) {
+                Assert.assertNotNull(e);
+            }
+
+            // Testing the zero verification length.
+            try {
+                verifyService.createVerifiableData(tokenValidityEndDate,
+                        0L,
+                        getRandomVerificationLengthBase());
+            } catch (NonPositiveVerificationLength e) {
+                Assert.assertNotNull(e);
+            }
+
+            // Testing null verification length base and negative verification length.
+            try {
+                verifyService.createVerifiableData(tokenValidityEndDate,
+                        -1L,
+                        null);
+            } catch (IllegalArgumentException e) {
+                Assert.assertNotNull(e);
+            } catch (NonPositiveVerificationLength e) {
+                Assert.assertNotNull(e);
+            }
         }
         return verifiableDataCreations;
     }
@@ -131,6 +158,7 @@ public class VerifyTestImpl implements VerifyTest {
                     verificationLength,
                     getRandomVerificationLengthBase());
             Assert.assertNotNull(createVerificationRequest);
+            Assert.assertTrue(createVerificationRequest.getVerificationRequestId() > 0L);
             VerifiableDataCreation verifiableDataCreation = new VerifiableDataCreation(vdc.getVerifiableDataId(),
                     createVerificationRequest);
             verifiableDataCreationsExpired.add(verifiableDataCreation);
@@ -175,58 +203,89 @@ public class VerifyTestImpl implements VerifyTest {
     }
 
     @Override
+    public void testComplex() {
+        List<VerifiableDataCreation> createVerifiableDataCreationsExpired = createVerifiableDataCreationsExpired();
+        List<VerifiableDataCreation> createVerifiableDataCreation = createVerifiableDataCreation();
+        createVerifiableDataCreation.addAll(createVerifiableDataCreation());
+        createVerifiableDataCreation.addAll(createVerifiableDataCreation());
+        createVerifiableDataCreation.addAll(createVerifiableDataCreation());
+        createVerifiableDataCreation.addAll(createVerifiableDataCreation());
+
+        Date actualData = new Date();
+        Calendar c = Calendar.getInstance();
+        c.setTime(actualData);
+        c.add(Calendar.DATE, 1);
+        Date endDate = c.getTime();
+
+        for (VerifiableDataCreation vdc : createVerifiableDataCreation) {
+            Date verificationEndDate = verifyService.getVerificationEndDate(vdc.getVerifiableDataId());
+            Assert.assertNull(verificationEndDate);
+
+            boolean reduceVerificationEndDate = verifyService.reduceVerificationEndDate(vdc.getVerifiableDataId(),
+                    endDate);
+            Assert.assertFalse(reduceVerificationEndDate);
+
+            verificationEndDate = verifyService.getVerificationEndDate(vdc.getVerifiableDataId());
+            Assert.assertNull(verificationEndDate);
+
+            VerificationResult verifyData = verifyService.verifyData(vdc.getVerificationRequest().getVerifyTokenUUID());
+            Assert.assertNotNull(verifyData);
+            Assert.assertEquals(TokenUsageResult.VERIFIED, verifyData.getTokenUsageResult());
+
+            verificationEndDate = verifyService.getVerificationEndDate(vdc.getVerifiableDataId());
+            Assert.assertNotNull(verificationEndDate);
+
+            reduceVerificationEndDate = verifyService.reduceVerificationEndDate(vdc.getVerifiableDataId(),
+                    endDate);
+            Assert.assertTrue(reduceVerificationEndDate);
+
+            verificationEndDate = verifyService.getVerificationEndDate(vdc.getVerifiableDataId());
+            Assert.assertNotNull(verificationEndDate);
+
+            reduceVerificationEndDate = verifyService.reduceVerificationEndDate(vdc.getVerifiableDataId(),
+                    endDate);
+            Assert.assertFalse(reduceVerificationEndDate);
+
+            verificationEndDate = verifyService.getVerificationEndDate(vdc.getVerifiableDataId());
+            Assert.assertNotNull(verificationEndDate);
+        }
+
+        for (VerifiableDataCreation vdc : createVerifiableDataCreationsExpired) {
+            Date verificationEndDate = verifyService.getVerificationEndDate(vdc.getVerifiableDataId());
+            Assert.assertNull(verificationEndDate);
+
+            boolean reduceVerificationEndDate = verifyService.reduceVerificationEndDate(vdc.getVerifiableDataId(),
+                    endDate);
+            Assert.assertFalse(reduceVerificationEndDate);
+
+            VerificationResult verifyData = verifyService.verifyData(vdc.getVerificationRequest().getVerifyTokenUUID());
+            Assert.assertNotNull(verifyData);
+            Assert.assertEquals(TokenUsageResult.EXPIRED, verifyData.getTokenUsageResult());
+            Assert.assertEquals(Long.valueOf(vdc.getVerifiableDataId()), verifyData.getVerifiableDataId());
+
+            verificationEndDate = verifyService.getVerificationEndDate(vdc.getVerifiableDataId());
+            Assert.assertNull(verificationEndDate);
+
+            reduceVerificationEndDate = verifyService.reduceVerificationEndDate(vdc.getVerifiableDataId(),
+                    endDate);
+            Assert.assertFalse(reduceVerificationEndDate);
+        }
+        VerificationRequest verificationRequest = new VerificationRequest(0L, null, null);
+        verificationRequest.setRejectTokenUUID("reject");
+        verificationRequest.setVerifyTokenUUID("verify");
+        verificationRequest.setVerificationRequestId(0L);
+        VerifiableDataCreation verifiableDataCreation = new VerifiableDataCreation(0L, null);
+        verifiableDataCreation.setVerifiableDataId(0L);
+        verifiableDataCreation.setVerificationRequest(verificationRequest);
+
+        VerificationResult verificationResult = new VerificationResult(0L, null);
+        verificationResult.setVerifiableDataId(0L);
+        verificationResult.setTokenUsageResult(TokenUsageResult.EXPIRED);
+    }
+
+    @Override
     public void testCreates() {
         List<VerifiableDataCreation> verifiableDataCreations = createVerifiableDataCreation();
-        for (int i = 0; i < CONSTANT; i++) {
-            Date actualDate = new Date();
-            Date tokenValidityEndDate = getValidTokenValidityEndDate();
-            long verificationLength = tokenValidityEndDate.getTime() - actualDate.getTime() - (2 * TEN_HOUR_IN_SEC);
-
-            // Testing the null validity end date.
-            try {
-                verifyService.createVerifiableData(null,
-                        verificationLength,
-                        getRandomVerificationLengthBase());
-            } catch (IllegalArgumentException e) {
-                Assert.assertNotNull(e);
-            }
-
-            // Testing the null verification length base.
-            try {
-                verifyService.createVerifiableData(tokenValidityEndDate,
-                        verificationLength,
-                        null);
-            } catch (IllegalArgumentException e) {
-                Assert.assertNotNull(e);
-            }
-
-            // Testing the negative verification length.
-            try {
-                verifyService.createVerifiableData(tokenValidityEndDate,
-                        -1L,
-                        getRandomVerificationLengthBase());
-            } catch (IllegalArgumentException e) {
-                Assert.assertNotNull(e);
-            }
-
-            // Testing the zero verification length.
-            try {
-                verifyService.createVerifiableData(tokenValidityEndDate,
-                        0L,
-                        getRandomVerificationLengthBase());
-            } catch (IllegalArgumentException e) {
-                Assert.assertNotNull(e);
-            }
-
-            // Testing null verification length base and negative verification length.
-            try {
-                verifyService.createVerifiableData(tokenValidityEndDate,
-                        -1L,
-                        null);
-            } catch (IllegalArgumentException e) {
-                Assert.assertNotNull(e);
-            }
-        }
 
         for (VerifiableDataCreation vdc : verifiableDataCreations) {
             // Testing the createVerificationRequest.
@@ -247,7 +306,7 @@ public class VerifyTestImpl implements VerifyTest {
                         tokenValidityEndDate,
                         verificationLength,
                         getRandomVerificationLengthBase());
-            } catch (IllegalArgumentException e) {
+            } catch (NoSuchVerifiableDataException e) {
                 Assert.assertNotNull(e);
             }
 
@@ -258,7 +317,7 @@ public class VerifyTestImpl implements VerifyTest {
                         tokenValidityEndDate,
                         verificationLength,
                         getRandomVerificationLengthBase());
-            } catch (IllegalArgumentException e) {
+            } catch (NoSuchVerifiableDataException e) {
                 Assert.assertNotNull(e);
             }
 
@@ -280,7 +339,7 @@ public class VerifyTestImpl implements VerifyTest {
                         tokenValidityEndDate,
                         -1L,
                         getRandomVerificationLengthBase());
-            } catch (IllegalArgumentException e) {
+            } catch (NonPositiveVerificationLength e) {
                 Assert.assertNotNull(e);
             }
 
@@ -291,7 +350,7 @@ public class VerifyTestImpl implements VerifyTest {
                         tokenValidityEndDate,
                         0L,
                         getRandomVerificationLengthBase());
-            } catch (IllegalArgumentException e) {
+            } catch (NonPositiveVerificationLength e) {
                 Assert.assertNotNull(e);
             }
 
@@ -313,7 +372,9 @@ public class VerifyTestImpl implements VerifyTest {
                         tokenValidityEndDate,
                         -1L,
                         getRandomVerificationLengthBase());
-            } catch (IllegalArgumentException e) {
+            } catch (NoSuchVerifiableDataException e) {
+                Assert.assertNotNull(e);
+            } catch (NonPositiveVerificationLength e) {
                 Assert.assertNotNull(e);
             }
         }
@@ -332,21 +393,22 @@ public class VerifyTestImpl implements VerifyTest {
         for (VerifiableDataCreation vdc : verifiableDataCreations) {
             // Testing the getVerification end date in the not expired verifiable data.
             Date verificationEndDate = verifyService.getVerificationEndDate(vdc.getVerifiableDataId());
-            Date actualDate = new Date();
-            Assert.assertNotNull(verificationEndDate);
-            Assert.assertTrue(actualDate.getTime() < verificationEndDate.getTime());
+            // Date actualDate = new Date();
+            Assert.assertNull(verificationEndDate);
+            // Assert.assertNotNull(verificationEndDate);
+            // Assert.assertTrue(actualDate.getTime() < verificationEndDate.getTime());
 
             // Testing the invalid verifiable data id.
             try {
                 verifyService.getVerificationEndDate(0L);
-            } catch (IllegalArgumentException e) {
+            } catch (NoSuchVerifiableDataException e) {
                 Assert.assertNotNull(e);
             }
 
             // Testing the negative invalid verifiable data id.
             try {
                 verifyService.getVerificationEndDate(-1L);
-            } catch (IllegalArgumentException e) {
+            } catch (NoSuchVerifiableDataException e) {
                 Assert.assertNotNull(e);
             }
         }
@@ -374,7 +436,7 @@ public class VerifyTestImpl implements VerifyTest {
 
             try {
                 verifyService.invalidateData(vdc.getVerifiableDataId());
-            } catch (IllegalArgumentException e) {
+            } catch (NoSuchVerificationRequestException e) {
                 Assert.assertNotNull(e);
             }
         }
@@ -403,19 +465,20 @@ public class VerifyTestImpl implements VerifyTest {
             c.add(Calendar.SECOND, CONSTANT);
             boolean reduceVerificationEndDate = verifyService.reduceVerificationEndDate(vdc.getVerifiableDataId(),
                     c.getTime());
-            Assert.assertTrue(reduceVerificationEndDate);
+            Assert.assertFalse(reduceVerificationEndDate);
+            // Assert.assertTrue(reduceVerificationEndDate);
 
             // Testing invalid verifiable data id.
             try {
                 verifyService.reduceVerificationEndDate(0L, c.getTime());
-            } catch (IllegalArgumentException e) {
+            } catch (NoSuchVerifiableDataException e) {
                 Assert.assertNotNull(e);
             }
 
             // Testing the negative invalid verifiable data id.
             try {
                 verifyService.reduceVerificationEndDate(-1L, c.getTime());
-            } catch (IllegalArgumentException e) {
+            } catch (NoSuchVerifiableDataException e) {
                 Assert.assertNotNull(e);
             }
 
@@ -429,7 +492,7 @@ public class VerifyTestImpl implements VerifyTest {
             try {
                 verifyService.reduceVerificationEndDate(vdc.getVerifiableDataId(),
                         new Date());
-            } catch (IllegalArgumentException e) {
+            } catch (InvalidVericationEndDateException e) {
                 Assert.assertNotNull(e);
             }
 

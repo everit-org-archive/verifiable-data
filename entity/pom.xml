@@ -52,7 +52,6 @@
                             *
                         </Import-Package>
                         <Export-Package>${project.artifactId}</Export-Package>
-                        <Meta-Persistence>META-INF/persistence.xml</Meta-Persistence>
                     </instructions>
                 </configuration>
             </plugin>

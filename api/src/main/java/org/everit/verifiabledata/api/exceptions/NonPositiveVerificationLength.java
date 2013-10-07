@@ -1,4 +1,4 @@
-package org.everit.verifiabledata.itests.core;
+package org.everit.verifiabledata.api.exceptions;
 
 /*
  * Copyright (c) 2011, Everit Kft.
@@ -21,52 +21,21 @@ package org.everit.verifiabledata.itests.core;
  * MA 02110-1301  USA
  */
 
-import org.junit.Test;
-
 /**
- * Test interface for testing {@link VerifyService}.
+ * NonPositiveVerificationLength is throw when the verification length is not positive.
  */
-public interface VerifyTest {
+public class NonPositiveVerificationLength extends RuntimeException {
 
     /**
-     * Testing the complex test in the methods.
+     * The generated serial version UID.
      */
-    @Test
-    void testComplex();
+    private static final long serialVersionUID = 2453033101894377377L;
 
     /**
-     * Testing the create methods.
+     * The default constructor.
      */
-    @Test
-    void testCreates();
+    public NonPositiveVerificationLength() {
+        super("The verificationLength is negative. Must be positve.");
+    }
 
-    /**
-     * Testing getVerificationEndDate method.
-     */
-    @Test
-    void testGetVerificationEndDate();
-
-    /**
-     * Testing invalidateData method.
-     */
-    @Test
-    void testInvalidateData();
-
-    /**
-     * Testing the reduceVerificationEndDate method.
-     */
-    @Test
-    void testReduceVerificationEndDate();
-
-    /**
-     * Testing the rejected token.
-     */
-    @Test
-    void testRejectedRequest();
-
-    /**
-     * Testing verifyData method.
-     */
-    @Test
-    void testVerifyData();
 }

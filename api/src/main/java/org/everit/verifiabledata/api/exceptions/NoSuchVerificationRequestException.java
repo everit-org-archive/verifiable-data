@@ -1,4 +1,4 @@
-package org.everit.verifiabledata.itests.core;
+package org.everit.verifiabledata.api.exceptions;
 
 /*
  * Copyright (c) 2011, Everit Kft.
@@ -20,53 +20,21 @@ package org.everit.verifiabledata.itests.core;
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
-import org.junit.Test;
-
 /**
- * Test interface for testing {@link VerifyService}.
+ * NoSuchVerificationRequestException is throw when the verifiable request is not exist in the database.
  */
-public interface VerifyTest {
+public class NoSuchVerificationRequestException extends RuntimeException {
 
     /**
-     * Testing the complex test in the methods.
+     * The generated serial version UID.
      */
-    @Test
-    void testComplex();
+    private static final long serialVersionUID = 2453033101894377377L;
 
     /**
-     * Testing the create methods.
+     * The default constructor.
      */
-    @Test
-    void testCreates();
+    public NoSuchVerificationRequestException() {
+        super("Not exist the verifiable request.");
+    }
 
-    /**
-     * Testing getVerificationEndDate method.
-     */
-    @Test
-    void testGetVerificationEndDate();
-
-    /**
-     * Testing invalidateData method.
-     */
-    @Test
-    void testInvalidateData();
-
-    /**
-     * Testing the reduceVerificationEndDate method.
-     */
-    @Test
-    void testReduceVerificationEndDate();
-
-    /**
-     * Testing the rejected token.
-     */
-    @Test
-    void testRejectedRequest();
-
-    /**
-     * Testing verifyData method.
-     */
-    @Test
-    void testVerifyData();
 }
